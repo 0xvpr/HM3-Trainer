@@ -1,0 +1,3 @@
+C:/Users/Kelsey/Desktop/Lee/lab/HM3Trainer/trainer/build/CMakeFiles/hm3_trainer.dir
+C:/Users/Kelsey/Desktop/Lee/lab/HM3Trainer/trainer/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/Kelsey/Desktop/Lee/lab/HM3Trainer/trainer/build/CMakeFiles/ZERO_CHECK.dir

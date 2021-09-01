@@ -54,3 +54,7 @@ _deps
 *-prefix/
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,cmake
+#
+# My ignores
+compile_flags.txt
+*build/

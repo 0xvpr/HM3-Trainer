@@ -42,7 +42,7 @@ CMakeCache.txt
 CMakeFiles
 CMakeScripts
 Testing
-Makefile
+#Makefile            # Makefile is important
 cmake_install.cmake
 install_manifest.txt
 compile_commands.json

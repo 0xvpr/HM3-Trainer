@@ -1,0 +1,49 @@
+###################################
+### 							###
+###		 Hitman Bloodmoney		###
+### 							###
+###################################
+
+CTRL + F TABLE:
+	1. Common Values
+	2. Op Codes
+	3. Reliable Offsets
+
+Common Values:
+	Player health initial values (float):
+		pro: 80
+		rookie: 190
+		
+	npc health:
+		starts at 40
+	
+Op Codes:
+	-------- NEW HEALTH -------- 
+	005FB973 - D8 64 24 08 - fsub dword ptr [esp+08]
+
+	Original Op Code 	= D8 64 24 08
+	New Op Code 		= 90 90 90 90
+	Length of the new op code = 4
+	
+	-------- AMMO DEC --------
+	// We can add more to this op
+	005140E7 - 49 - dec ecx
+
+	Original Op code 	= 49
+	New Op Code			= 90
+	length of the new op code = 1
+	
+	
+	-------- ONE SHOT KILL --------
+	(OG)
+	HitmanBloodMoney.exe+232EA6 - D8 64 24 04 D9 91 28 09 00 00  - fsub dword ptr [esp+04], fst dword ptr [ecx+00000928]
+	length = 8
+	
+	(NEW)
+	// Maybe change this to: lea eax, eax+04; xor eax, eax; fsub dword ptr [ecx+00000928], eax
+	HitmanBloodMoney.exe+232EA6 - D8 A1 28 09 00 00 90 90 90 90 - fsub dword ptr [ecx+00000928], nop
+	length = 8
+	
+Reliable Offsets:
+	Entity List:
+		["HitmanBloodMoney.exe"+ 0x41F83C]

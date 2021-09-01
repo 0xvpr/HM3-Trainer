@@ -9,7 +9,7 @@
 #include "injector.h"
 
 static const char* target_process = "HitmanBloodMoney.exe";
-static const char* dll_path = "./hm3_trainer.dll";
+static const char* dll_path = "./trainer.dll";
 
 int main(void)
 {

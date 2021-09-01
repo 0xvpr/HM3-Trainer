@@ -13,8 +13,8 @@ all:
 	
 	@# Copy compiled files to ./bin
 	if ! [ -d bin ]; then mkdir -p bin; fi && \
-	cp ./injector/build/Release/hm3_injector.exe ./bin && \
-	cp ./trainer/build/Release/hm3_trainer.dll ./bin/
+	cp ./injector/build/Release/Shitman.exe ./bin && \
+	cp ./trainer/build/Release/trainer.dll ./bin/
 
 clean:
 	@# Clean output folder

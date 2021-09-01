@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.7)
 
-project("hm3_trainer")
-set(EXEC "hm3_trainer")
+project("Shitman")
+set(EXEC "trainer")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

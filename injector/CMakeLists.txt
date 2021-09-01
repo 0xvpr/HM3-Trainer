@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.7)
 
-project("hm3_injector")
-set(EXEC "hm3_injector")
+project("Shitman")
+set(EXEC "Shitman")
 
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD 17)

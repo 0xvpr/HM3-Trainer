@@ -4,13 +4,13 @@
 
 namespace Events
 {
-	void UpdateStatus(void);
+  void UpdateStatus(void);
 
-	void UpdateCurrentEntity(void);
+  void UpdateCurrentEntity(void);
 
-	void UpdatePlayerCamCoords(void);
+  void UpdatePlayerCamCoords(void);
 
-	void UpdateEntityList(EntityList* entityList);
+  void UpdateEntityList(EntityList* entityList);
 
-	void HandleKeyboard(void);
+  void HandleKeyboard(void);
 };

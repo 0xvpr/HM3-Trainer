@@ -1,15 +1,7 @@
-/////////////////////////////////////////////////
-//                                             //
-//  d8            8b 88888888b.  88888888b.    //
-//   d8          8b  88      'Yb 88      'Yb   //
-//    d8        8b   88       88 88       88   //
-//     d8      8b    888888888P  888888888P    //
-//      d8    8b     88          88  '88.      //
-//       d8  8b      88          88    Y8b     //
-//        d88b       88          88     '88.   //
-//         db        88          88       Y8b. //
-//                                              
-///////////////////////////////////////////////////
+/**
+ * @Author   VPR
+ * @Modified September 17, 2021
+**/
 
 #include "includes.h"
 #include "hacks.hpp"
@@ -37,98 +29,98 @@ float z_cam = 0;
 
 void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 {
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
-    ImGui_ImplWin32_Init(window);
-    ImGui_ImplDX9_Init(pDevice);
+  ImGui::CreateContext();
+  ImGuiIO& io = ImGui::GetIO();
+  io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
+  ImGui_ImplWin32_Init(window);
+  ImGui_ImplDX9_Init(pDevice);
 }
 
 
 long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
 {
-    if (!bInit)
-    {
-        InitImGui(pDevice);
-        bInit = true;
-    }
+  if (!bInit)
+  {
+    InitImGui(pDevice);
+    bInit = true;
+  }
 
-	Hacks::UpdateGameState();
-	Events::HandleKeyboard();
-	Render::MainUI();
+  Hacks::UpdateGameState();
+  Events::HandleKeyboard();
+  Render::MainUI();
 
-    // Disable all cheats before ejecting
-    if (bLastPass)
-    {
-        kiero::shutdown();
-    }
+  // Disable all cheats before ejecting
+  if (bLastPass)
+  {
+    kiero::shutdown();
+  }
 
-    return oEndScene(pDevice);
+  return oEndScene(pDevice);
 }
 
 
 LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
-    if (true && ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
-        return true;
+  if (true && ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+    return true;
 
-    return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
+  return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
 }
 
 
 BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam)
 {
-    DWORD wndProcId;
-    GetWindowThreadProcessId(handle, &wndProcId);
+  DWORD wndProcId;
+  GetWindowThreadProcessId(handle, &wndProcId);
 
-    if (GetCurrentProcessId() != wndProcId)
-        return TRUE; // skip to next window
+  if (GetCurrentProcessId() != wndProcId)
+    return TRUE; // skip to next window
 
-    window = handle;
-    return FALSE; // window found abort search
+  window = handle;
+  return FALSE; // window found abort search
 }
 
 
 HWND GetProcessWindow()
 {
-    window = NULL;
-    EnumWindows(EnumWindowsCallback, NULL);
-    return window;
+  window = NULL;
+  EnumWindows(EnumWindowsCallback, NULL);
+  return window;
 }
 
 
 DWORD WINAPI MainThread(LPVOID lpReserved)
 {
-    bool attached = false;
-    do
+  bool attached = false;
+  do
+  {
+    if (kiero::init(kiero::RenderType::D3D9) == kiero::Status::Success)
     {
-        if (kiero::init(kiero::RenderType::D3D9) == kiero::Status::Success)
-        {
-            kiero::bind(42, (void **)& oEndScene, hkEndScene);
-            do
-                window = GetProcessWindow();
-            while (window == NULL);
-            oWndProc = (WNDPROC)SetWindowLongPtr(window, GWL_WNDPROC, (LONG_PTR)WndProc);
-            attached = true;
-        }
-    } while (!attached);
+      kiero::bind(42, (void **)& oEndScene, hkEndScene);
+      do
+        window = GetProcessWindow();
+      while (window == NULL);
+      oWndProc = (WNDPROC)SetWindowLongPtr(window, GWL_WNDPROC, (LONG_PTR)WndProc);
+      attached = true;
+    }
+  } while (!attached);
 
-    return TRUE;
+  return TRUE;
 }
 
 
 BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 {
-    switch (dwReason)
-    {
-        case DLL_PROCESS_ATTACH:
-            DisableThreadLibraryCalls(hModule);
-            CreateThread(nullptr, 0, MainThread, hModule, 0, nullptr);
-            break;
-        case DLL_PROCESS_DETACH:
-            kiero::shutdown();
-            break;
-    }
+  switch (dwReason)
+  {
+    case DLL_PROCESS_ATTACH:
+      DisableThreadLibraryCalls(hModule);
+      CreateThread(nullptr, 0, MainThread, hModule, 0, nullptr);
+      break;
+    case DLL_PROCESS_DETACH:
+      kiero::shutdown();
+      break;
+  }
 
-    return TRUE;
+  return TRUE;
 }

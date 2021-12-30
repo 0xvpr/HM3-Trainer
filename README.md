@@ -2,6 +2,7 @@
 ### Timeline
 - Project started:      08/29/2021
 - Project completed:    09/01/2021
+- Project revisited:    12/29/2021
   
 ## Overview:
 This is a repository for a Hitman Blood Money Trainer that I built with C, C++, ImGui and Kiero.

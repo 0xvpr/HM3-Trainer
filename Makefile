@@ -1,25 +1,36 @@
-PROJECT=Hitman Blood Money Trainer
+PROJECT     = shitman3
 
-all:
-	@# Build Injector
-	cd ./injector && \
-	powershell.exe -c "cmake.exe -A Win32 -B build" && \
-	powershell.exe -c "cmake.exe --build build --config Release"
-	
-	@# Build Data Tool
-	cd ./trainer && \
-	powershell.exe -c "cmake.exe -A Win32 -B build" && \
-	powershell.exe -c "cmake.exe --build build --config Release"
-	
-	@# Copy compiled files to ./bin
-	if ! [ -d bin ]; then mkdir -p bin; fi && \
-	cp ./injector/build/Release/Shitman.exe ./bin && \
-	cp ./trainer/build/Release/trainer.dll ./bin/
+ARCH        = Win32
+#ARCH       = Win64
+
+CMAKE       = cmake.exe
+TOOLCHAIN   = 
+CMAKE_FLAGS =
+
+BUILD       = Build
+SOURCE      = Source
+INCLUDE     = Include
+
+SOURCES     = $(wildcard $(SOURCE)/*.cpp)
+OBJECTS     = $(patsubst $(SOURCE)/%.cpp,$(BUILD)/CMakeFiles/$(PROJECT).dir/$(SOURCE)/%.cpp.o,$(SOURCES))
+
+all: $(PROJECT)
+$(PROJECT): release debug
+
+release: CMakeLists.txt
+	$(CMAKE) --build $(BUILD) --config Release
+
+debug: CMakeLists.txt
+	$(CMAKE) --build $(BUILD) --config Debug
+
+.PHONY: $(OBJECTS)
+CMakeLists.txt: $(OBJECTS)
+	$(CMAKE) -B $(BUILD) -A $(ARCH)
 
 clean:
-	@# Clean output folder
-	rm -fr ./bin/**
-	
-	@# Clean build folders
-	cd ./injector && rm -fr ./build/**
-	cd ./trainer && rm -fr ./build/**
+	rm -fr Bin/*
+	rm -fr Build/*
+
+extra-clean:
+	rm -fr Bin
+	rm -fr Build

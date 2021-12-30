@@ -1,23 +1,6 @@
 #include "Memory.hpp"
 
 [[nodiscard]]
-uintptr_t memory::FindDynamicAddress(uintptr_t ptr, const std::vector<unsigned>& offsets) {
-
-    uintptr_t addr = ptr;
-
-    for (const auto& offset : offsets) {
-        addr = *(uintptr_t *)addr;
-        addr += offset;
-
-        if (*(uintptr_t *)addr == 0) { 
-            return 0;
-        }
-    }
-
-    return addr;
-}
-
-[[nodiscard]]
 bool memory::Patch(void* dst, void* src, size_t size) {
 
     DWORD oldprotect;

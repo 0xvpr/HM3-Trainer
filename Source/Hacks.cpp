@@ -5,24 +5,39 @@
 
 extern uintptr_t module_base_addr;
 
-void hacks::TeleportToCam(bool bEnabled) {
+void hacks::TeleportToCam() {
 
-    if (!bEnabled) {
-        return;
-    }
-
-    auto player = (Coords *)memory::FindDynamicAddress(module_base_addr + offsets::player_xyz_addr, offsets::player_xyz_offsets);
-    auto cam = (Coords *)memory::FindDynamicAddress(module_base_addr + offsets::cam_xyz_addr, offsets::cam_xyz_offsets);
+    auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz_addr, offsets::player_xyz_offsets);
+    auto cam = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::cam_xyz_addr, offsets::cam_xyz_offsets);
 
     auto bInGame = []{
         auto entityList = *(EntityList **)(module_base_addr + offsets::entity_addr);
-        return entityList->n_entities > 1 && entityList->n_entities < 256;
+        return entityList->n_entities > 1 && entityList->n_entities < 167;
     }();
 
     if (bInGame) {
         player->x = cam->x +  5;
         player->y = cam->y + 10;
         player->z = cam->z +  5;
+    }
+
+}
+
+void hacks::TeleportToEntity(unsigned target) {
+
+    auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz_addr, offsets::player_xyz_offsets);
+    auto entityList = *(EntityList **)(module_base_addr + offsets::entity_addr);
+    auto entity = entityList->ents[target].entity;
+
+    auto bInGame = []{
+        auto entityList = *(EntityList **)(module_base_addr + offsets::entity_addr);
+        return entityList->n_entities > 1 && entityList->n_entities < 167;
+    }();
+
+    if (bInGame) {
+        player->x = entity->x +  5;
+        player->y = entity->y + 10;
+        player->z = entity->z +  5;
     }
 
 }

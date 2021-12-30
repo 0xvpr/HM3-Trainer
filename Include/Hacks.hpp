@@ -8,7 +8,8 @@
 #include <tlhelp32.h>
 
 namespace hacks {
-    void TeleportToCam(bool bEnabled);
+    void TeleportToCam();
+    void TeleportToEntity(unsigned target);
     void ToggleGodMode(bool bEnabled);
 }
 

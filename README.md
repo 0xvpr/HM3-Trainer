@@ -5,13 +5,13 @@
 - Project revisited:    12/29/2021
   
 ## Overview:
-This is a repository for a Hitman Blood Money Trainer that I built with C, C++, ImGui and Kiero.
+This is a repository for a Hitman Blood Money Trainer that I built with C++.
 
-The main purpose of this project was to get familiar with programming internal GUIs and  
+The main purpose of this project was to get familiar with programming internal GUIs from scratch and  
 familiarize myself with process hooking techniques.
 
-<img src="./resources/demo.gif"/>
-Demonstration of God Mode and Teleport hacks.  
+[Demonstration](https://www.youtube.com/watch?v=0btTuzX9aQU)
+of God Mode and Teleport hacks.  
 
 ## Table of Contents
 - [What I Learned](#what-i-learned)
@@ -24,10 +24,11 @@ Demonstration of God Mode and Teleport hacks.
 [ What the fuck did I actually learn ]
 
 ### How it works
-Run the hm3_injector.exe BEFORE you start Hitman Blood Money (most consistent)
+The DLL must be injected WHILE the game is running in the foreground.  
+It is very finicky and will crash/hang otherwise.
 
 The hacks written are:
-- Press <code>END</code> to toggle GUI menu.
+- Press <code>END</code> to eject.
 - Press <code>TAB</code> to toggle God mode.
 - Press <code>[</code> previous entity.
 - Press <code>]</code> next entity.
@@ -45,7 +46,7 @@ These game states include:
 - Restarting a mission with cheats enabled (sometimes)
 
 ### Build Instructions
-- WSL
+- WSL (Preferred)
 	1. install Visual Studio with CMake support
 	2. cd into project root
     ```

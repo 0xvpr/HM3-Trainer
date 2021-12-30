@@ -13,13 +13,27 @@ namespace memory {
 /**
  * Finds the Dynamic Memory Access address of an embedded process.
  *
- * @param:  uintptr_t ptr
- * @param:  unsigned offsets[]
- * @param:  size_t size
+ * @param:  ptr
+ * @param:  offsets
  *
- * @return: uintptr_t
+ * @return: addr
 **/
-uintptr_t FindDynamicAddress(uintptr_t ptr, const std::vector<unsigned>& offsets);
+template <typename T> [[nodiscard]]
+T FindDynamicAddress(uintptr_t ptr, const std::vector<unsigned>& offsets) {
+
+    auto addr = ptr;
+
+    for (const auto& offset : offsets) {
+        addr = *(uintptr_t *)addr;
+        addr += offset;
+
+        if (*(uintptr_t *)addr == 0) { 
+            return 0;
+        }
+    }
+
+    return reinterpret_cast<T>(addr);
+}
 
 /**
  * Byte replacement from source to destination.

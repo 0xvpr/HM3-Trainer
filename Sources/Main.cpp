@@ -28,7 +28,7 @@ HRESULT APIENTRY hkEndScene(LPDIRECT3DDEVICE9 pDevice) {
     if (bInit == false) {
         bInit = true;
 
-        render::InitializeRenderer(pDevice);
+        render::InitializeMenu(pDevice);
         render::CreateFont(pDevice, 20);
     }
     render::Menu(pDevice);

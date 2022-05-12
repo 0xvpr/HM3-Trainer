@@ -8,10 +8,10 @@ extern uintptr_t module_base_addr;
 
 bool bCheatsEnabled = false;
 
-unsigned current_entity = 0;
+static unsigned current_entity = 0;
 
 static inline
-void SetCurrentEntity(unsigned& current_entity, int operation) {
+void SetCurrentEntity(int operation) {
 
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity_addr);
     if (!entityList) {
@@ -19,8 +19,8 @@ void SetCurrentEntity(unsigned& current_entity, int operation) {
         return;
     }
 
-    auto bInGame = []{
-        auto entityList = *(EntityList **)(module_base_addr + offsets::entity_addr);
+    auto bInGame = [&entityList]{
+        //auto entityList = *(EntityList **)(module_base_addr + offsets::entity_addr);
         return entityList->n_entities > 1 && entityList->n_entities < 167;
     }();
 
@@ -55,18 +55,17 @@ bool events::HandleKeyboard(void) {
     if (GetAsyncKeyState(VK_TAB) & 1) {
         bCheatsEnabled = !bCheatsEnabled;
         hacks::ToggleGodMode(bCheatsEnabled);
+        hacks::ToggleStealth(bCheatsEnabled);
     }
 
     // Previous Entity
-    if ((GetAsyncKeyState(VK_OEM_4) & 1) > 0 && bCheatsEnabled)
-    {
-        SetCurrentEntity(current_entity, -1);
+    if ((GetAsyncKeyState(VK_OEM_4) & 1) > 0 && bCheatsEnabled) {
+        SetCurrentEntity(-1);
     }
 
     // Next Entity
-    if ((GetAsyncKeyState(VK_OEM_6) & 1) > 0 && bCheatsEnabled) 
-    {
-        SetCurrentEntity(current_entity, 1);
+    if ((GetAsyncKeyState(VK_OEM_6) & 1) > 0 && bCheatsEnabled) {
+        SetCurrentEntity(1);
     }
 
     if ((GetAsyncKeyState(VK_LSHIFT) & 0x8000) && (GetAsyncKeyState('T') & 1) && bCheatsEnabled) {

@@ -17,7 +17,7 @@ struct EntityObject {
 struct EntityList {
   int _0x8[2];
   unsigned int n_entities;
-  EntityObject ents[167];
+  EntityObject ents[127];
 };
 
 struct Coords {

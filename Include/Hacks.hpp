@@ -11,6 +11,7 @@ namespace hacks {
     void TeleportToCam();
     void TeleportToEntity(unsigned target);
     void ToggleGodMode(bool bEnabled);
+    void ToggleStealth(bool bEnabled);
 }
 
 #endif /* _HACKS_H */

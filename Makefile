@@ -1,36 +1,65 @@
-PROJECT     = shitman3
+PROJECT         = shitman3
 
-ARCH        = Win32
-#ARCH       = Win64
+CC              = i686-w64-mingw32-g++-posix
+CFLAGS          = -masm=intel -Wall -Wextra -Werror -Wshadow -Wpedantic -Wconversion\
+                  -Wno-missing-field-initializers
 
-CMAKE       = cmake.exe
-TOOLCHAIN   = 
-CMAKE_FLAGS =
+LD              = i686-w64-mingw32-g++-posix
+LDFLAGS         = -static -s -shared -ld3d9 -ld3dx9
 
-BUILD       = Build
-SOURCE      = Source
-INCLUDE     = Include
+ASM             = nasm
+ASFLAGS         = -f win32
 
-SOURCES     = $(wildcard $(SOURCE)/*.cpp)
-OBJECTS     = $(patsubst $(SOURCE)/%.cpp,$(BUILD)/CMakeFiles/$(PROJECT).dir/$(SOURCE)/%.cpp.o,$(SOURCES))
+BIN             = Lib
+BUILD           = Build
 
-all: $(PROJECT)
-$(PROJECT): release debug
+DEBUG           = $(BUILD)/Debug
+RELEASE         = $(BUILD)/Release
 
-release: CMakeLists.txt
-	$(CMAKE) --build $(BUILD) --config Release
+INCLUDE         = Include
+INCLUDES        = $(addprefix -I,$(INCLUDE))
 
-debug: CMakeLists.txt
-	$(CMAKE) --build $(BUILD) --config Debug
+SOURCE          = Sources
+SOURCES         = $(wildcard $(SOURCE)/*.cpp)
+DEBUG_OBJECTS   = $(patsubst $(SOURCE)/%.cpp,$(DEBUG)/%.o,$(SOURCES))
+RELEASE_OBJECTS = $(patsubst $(SOURCE)/%.cpp,$(RELEASE)/%.o,$(SOURCES))
 
-.PHONY: $(OBJECTS)
-CMakeLists.txt: $(OBJECTS)
-	$(CMAKE) -B $(BUILD) -A $(ARCH)
+### COMMENT IF YOU USE A TOASTER ###
+MAKEFLAGS      += -j$(shell nproc)
+### COMMENT IF YOU USE A TOASTER ###
 
+all: $(BIN) $(BUILD) $(PROJECT)
+$(PROJECT): debug release
+
+debug: CFLAGS := -O2 -g $(CFLAGS)
+debug: $(DEBUG_OBJECTS)
+	$(LD) $(DEBUG_OBJECTS) $(LDFLAGS) -o $(BIN)/$(PROJECT)_d.dll
+
+release: CFLAGS := -O3 -fvisibility=hidden -ffast-math $(CFLAGS)
+release: $(RELEASE_OBJECTS)
+	$(LD) $(RELEASE_OBJECTS) $(LDFLAGS) -o $(BIN)/$(PROJECT).dll
+
+$(DEBUG_OBJECTS): $(DEBUG)/%.o : $(SOURCE)/%.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@ 
+
+$(RELEASE_OBJECTS): $(RELEASE)/%.o : $(SOURCE)/%.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+.PHONY: $(BIN)
+$(BIN):
+	mkdir -p ./Lib
+
+.PHONY: $(BUILD)
+$(BUILD):
+	mkdir -p ./Build/Debug
+	mkdir -p ./Build/Release
+
+.PHONY: clean
 clean:
-	rm -fr Bin/*
-	rm -fr Build/*
+	rm -fr ./Lib/*
+	rm -fr ./Build/*
 
+.PHONY: extra-clean
 extra-clean:
-	rm -fr Bin
-	rm -fr Build
+	rm -fr ./Lib
+	rm -fr ./Build

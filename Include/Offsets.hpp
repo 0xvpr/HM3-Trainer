@@ -9,6 +9,7 @@ namespace offsets {
     const unsigned one_shot_addr                   = 0x632EA6;
     const unsigned health_addr                     = 0x5FB973;
     const unsigned ammo_addr                       = 0x5140E7;
+    const unsigned stealth_addr                    = 0x149C2D;
 
     // Object Pointers
     const unsigned player_xyz_addr                 = 0x41F83C;

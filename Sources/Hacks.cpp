@@ -29,8 +29,8 @@ void hacks::TeleportToEntity(unsigned target) {
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity_addr);
     auto entity = entityList->ents[target].entity;
 
-    auto bInGame = []{
-        auto entityList = *(EntityList **)(module_base_addr + offsets::entity_addr);
+    auto bInGame = [&entityList]{
+        //auto entityList = *(EntityList **)(module_base_addr + offsets::entity_addr);
         return entityList->n_entities > 1 && entityList->n_entities < 167;
     }();
 
@@ -68,6 +68,26 @@ void hacks::ToggleGodMode(bool bEnabled) {
         memory::Patch(ammo_address, ammo_op_codes, ammo_op_code_length);
         memory::Patch(health_address, health_op_codes, health_op_code_length);
         memory::Patch(one_shot_address, one_shot_op_codes, one_shot_op_code_length); // accidental kills no longer kill
+    }
+
+}
+
+void hacks::ToggleStealth(bool bEnabled) {
+
+    static uintptr_t stealth_addr = module_base_addr + offsets::stealth_addr;
+
+    static unsigned char stealth_original[2] = {
+        0x3B, 0xC3 // cmp   eax, ebx
+    };
+
+    static unsigned char stealth_patch[2] = {
+        0x39, 0xC0 // cmp   eax, eax
+    };
+
+    if (bEnabled) {
+        memory::Patch((void *)stealth_addr, stealth_patch, sizeof(stealth_patch));
+    } else {
+        memory::Patch((void *)stealth_addr, stealth_original, sizeof(stealth_original));
     }
 
 }

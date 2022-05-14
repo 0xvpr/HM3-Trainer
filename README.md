@@ -3,8 +3,11 @@
 - Project started:      08/29/2021
 - Project completed:    09/01/2021
 - Project revisited:    12/29/2021
+- Project abandoned:    01/12/2022
+- Project revisited:    05/12/2022
   
 ## Overview:
+<img src="./resources/Hack-Menu-Screenshot.png"/>
 This is a repository for a Hitman Blood Money Trainer that I built with C++.
 
 The main purpose of this project was to get familiar with programming internal GUIs from scratch and  

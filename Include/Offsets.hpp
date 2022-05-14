@@ -1,20 +1,20 @@
 #ifndef OFFSETS_HPP
 #define OFFSETS_HPP
 
-#include <cstddef>
+#include <stdint.h>
 #include <vector>
 
 namespace offsets {
     // Instructions
-    const unsigned one_shot_addr                   = 0x632EA6;
-    const unsigned health_addr                     = 0x5FB973;
-    const unsigned ammo_addr                       = 0x5140E7;
-    const unsigned stealth_addr                    = 0x149C2D;
+    constexpr unsigned one_shot_addr                   = 0x232EA6;
+    constexpr unsigned stealth_addr                    = 0x149C2D;
+    constexpr unsigned health_addr                     = 0x1FB973;
+    constexpr unsigned ammo_addr                       = 0x1140E7;
 
     // Object Pointers
-    const unsigned player_xyz_addr                 = 0x41F83C;
-    const unsigned cam_xyz_addr                    = 0x41F81C;
-    const unsigned entity_addr                     = 0x41F83C;
+    constexpr unsigned player_xyz_addr                 = 0x41F83C;
+    constexpr unsigned cam_xyz_addr                    = 0x41F81C;
+    constexpr unsigned entity_addr                     = 0x41F83C;
 
     // Object Offsets
     const std::vector<unsigned> cam_xyz_offsets    = { 0x8C, 0x150, 0x10, 0x14, 0x54, 0x90, 0x2C };

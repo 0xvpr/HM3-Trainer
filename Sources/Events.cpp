@@ -1,5 +1,6 @@
 #include "Events.hpp"
 
+#include "Menu.hpp"
 #include "Hacks.hpp"
 #include "Entity.hpp"
 #include "Offsets.hpp"
@@ -7,6 +8,8 @@
 extern uintptr_t module_base_addr;
 
 bool bCheatsEnabled = false;
+
+extern HackMenu* menu;
 
 static unsigned current_entity = 0;
 
@@ -54,8 +57,36 @@ bool events::HandleKeyboard(void) {
     
     if (GetAsyncKeyState(VK_TAB) & 1) {
         bCheatsEnabled = !bCheatsEnabled;
-        hacks::ToggleGodMode(bCheatsEnabled);
-        hacks::ToggleStealth(bCheatsEnabled);
+
+        if (!bCheatsEnabled) {
+            hacks::ToggleInfiniteAmmo(false);
+            hacks::ToggleInfiniteHealth(false);
+            hacks::ToggleOneShot(false);
+            hacks::ToggleStealth(false);
+        } else {
+            hacks::ToggleInfiniteAmmo(menu->items["Infinite Ammo"].bEnabled);
+            hacks::ToggleInfiniteHealth(menu->items["Infinite Health"].bEnabled);
+            hacks::ToggleOneShot(menu->items["One Shot Kill"].bEnabled);
+            hacks::ToggleStealth(menu->items["No Reactions"].bEnabled);
+        }
+
+    }
+
+    if (bCheatsEnabled && GetAsyncKeyState(VK_NUMPAD1) & 1) {
+        menu->items["Infinite Ammo"].bEnabled = !menu->items["Infinite Ammo"].bEnabled;
+        hacks::ToggleInfiniteAmmo(menu->items["Infinite Ammo"].bEnabled);
+    }
+    if (bCheatsEnabled && GetAsyncKeyState(VK_NUMPAD2) & 1) {
+        menu->items["Infinite Health"].bEnabled = !menu->items["Infinite Health"].bEnabled;
+        hacks::ToggleInfiniteHealth(menu->items["Infinite Health"].bEnabled);
+    }
+    if (bCheatsEnabled && GetAsyncKeyState(VK_NUMPAD3) & 1) {
+        menu->items["One Shot Kill"].bEnabled = !menu->items["One Shot Kill"].bEnabled;
+        hacks::ToggleOneShot(menu->items["One Shot Kill"].bEnabled); 
+    }
+    if (bCheatsEnabled && GetAsyncKeyState(VK_NUMPAD4) & 1) {
+        menu->items["No Reactions"].bEnabled = !menu->items["No Reactions"].bEnabled;
+        hacks::ToggleStealth(menu->items["No Reactions"].bEnabled);
     }
 
     // Previous Entity
@@ -68,16 +99,19 @@ bool events::HandleKeyboard(void) {
         SetCurrentEntity(1);
     }
 
-    if ((GetAsyncKeyState(VK_LSHIFT) & 0x8000) && (GetAsyncKeyState('T') & 1) && bCheatsEnabled) {
+    if (((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && (GetAsyncKeyState('T') & 1) && bCheatsEnabled) {
         hacks::TeleportToCam();
     }
 
-    if (!(GetAsyncKeyState(VK_LSHIFT) & 0x8000) && (GetAsyncKeyState('T') & 1) && bCheatsEnabled) {
+    if (!((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && (GetAsyncKeyState('T') & 1) && bCheatsEnabled) {
         hacks::TeleportToEntity(current_entity);
     }
 
-    if (GetAsyncKeyState(VK_END)) {
-        hacks::ToggleGodMode(false);
+    if (GetAsyncKeyState(VK_HOME)) {
+        hacks::ToggleInfiniteAmmo(false);
+        hacks::ToggleInfiniteHealth(false);
+        hacks::ToggleOneShot(false);
+        hacks::ToggleStealth(false);
         return true;
     }
 

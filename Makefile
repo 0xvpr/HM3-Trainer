@@ -1,11 +1,11 @@
 PROJECT         = shitman3
 
 CC              = i686-w64-mingw32-g++-posix
-CFLAGS          = -masm=intel -Wall -Wextra -Werror -Wshadow -Wpedantic -Wconversion\
+CFLAGS          = -std=c++2a -masm=intel -Wall -Wextra -Werror -Wshadow -Wpedantic -Wconversion\
                   -Wno-missing-field-initializers
 
 LD              = i686-w64-mingw32-g++-posix
-LDFLAGS         = -static -s -shared -ld3d9 -ld3dx9
+LDFLAGS         = -nostdinc++ -static -s -shared -ld3d9 -ld3dx9
 
 ASM             = nasm
 ASFLAGS         = -f win32

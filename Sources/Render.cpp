@@ -2,7 +2,7 @@
 
 #include "Menu.hpp"
 #include "Drawing.hpp"
-#include <cstdio>
+#include <stdio.h>
 
 extern bool bMaximizeMenu;
 extern bool bCheatsEnabled;
@@ -55,9 +55,11 @@ void render::Menu(LPDIRECT3DDEVICE9 d3dDevice) {
         }
 
         // Draw Cheats
-        //for (const auto& [key, value] : menu->items) {
-            //draw::DrawTextA(key, menu->X() + 7, menu->Y() + 10, 140, 20, draw::color::Green, m_font);
-        //}
+        int i = 1;
+        for (const auto& [key, value] : menu->items) {
+            draw::DrawTextA(key.c_str(), menu->X() + 12, menu->Y() + 12 + (i * 25), 140, 20, (value.bEnabled ? draw::color::Green : draw::color::LightGrey), m_font);
+            ++i;
+        }
 
         draw::DrawTextA("End to Eject", menu->X() + 12, menu->Y() + menu->MenuHeight() - 20, 140, 20, draw::color::LightGrey, m_font);
     } else {

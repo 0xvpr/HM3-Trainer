@@ -8,10 +8,10 @@ extern uintptr_t module_base_addr;
 void hacks::TeleportToCam() {
 
     auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz_addr, offsets::player_xyz_offsets);
+    auto entityList = *(EntityList **)(module_base_addr + offsets::entity_addr);
     auto cam = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::cam_xyz_addr, offsets::cam_xyz_offsets);
 
-    auto bInGame = []{
-        auto entityList = *(EntityList **)(module_base_addr + offsets::entity_addr);
+    auto bInGame = [&entityList]{
         return entityList->n_entities > 1 && entityList->n_entities < 167;
     }();
 
@@ -42,39 +42,74 @@ void hacks::TeleportToEntity(unsigned target) {
 
 }
 
-void hacks::ToggleGodMode(bool bEnabled) {
+void hacks::ToggleInfiniteAmmo(bool bEnabled) {
 
-    char* ammo_op_codes            = (char*)"\x49";
-    char* health_op_codes          = (char*)"\xD8\x64\x24\x08";
-    char* one_shot_op_codes        = (char*)"\xD8\x64\x24\x04\xD9\x91\x28\x09\x00\x00";
+    static void* ammo_addr = (void *)(module_base_addr + offsets::ammo_addr);
 
-    char* ammo_op_codes_new        = (char *)"\x40";
-    char* health_op_codes_new      = (char *)"\x90\x90\x90\x90";
-    char* one_shot_op_codes_new    = (char *)"\xD8\xA1\x28\x09\x00\x00\x90\x90\x90\x90";
-
-    char* ammo_address             = (char *)offsets::ammo_addr;
-    char* health_address           = (char *)offsets::health_addr;
-    char* one_shot_address         = (char *)offsets::one_shot_addr;
-
-    size_t ammo_op_code_length     = 1;
-    size_t health_op_code_length   = 4;
-    size_t one_shot_op_code_length = 10;
+    static unsigned char ammo_original[1] = {
+        0x49
+    };
+    static unsigned char ammo_patch[1] = {
+        0x40
+    };
 
     if (bEnabled) {
-        memory::Patch(ammo_address, ammo_op_codes_new, ammo_op_code_length);
-        memory::Patch(health_address, health_op_codes_new, health_op_code_length);
-        memory::Patch(one_shot_address, one_shot_op_codes_new, one_shot_op_code_length); // accidental kills no longer kill
+        memory::Patch(ammo_addr, ammo_patch, sizeof(ammo_patch));
     } else {
-        memory::Patch(ammo_address, ammo_op_codes, ammo_op_code_length);
-        memory::Patch(health_address, health_op_codes, health_op_code_length);
-        memory::Patch(one_shot_address, one_shot_op_codes, one_shot_op_code_length); // accidental kills no longer kill
+
+        memory::Patch(ammo_addr, ammo_original, sizeof(ammo_original));
+    }
+
+}
+void hacks::ToggleInfiniteHealth(bool bEnabled) {
+
+    static void* health_addr = (void *)(module_base_addr + offsets::health_addr);
+
+    static unsigned char health_original[4] = {
+        0xD8, 0x64, 0x24, 0x08
+    };
+    static unsigned char health_patch[4] = {
+        0x90,
+        0x90,
+        0x90,
+        0x90
+    };
+
+    if (bEnabled) {
+        memory::Patch(health_addr, health_patch, sizeof(health_patch));
+    } else {
+        memory::Patch(health_addr, health_original, sizeof(health_original));
+    }
+
+}
+
+
+void hacks::ToggleOneShot(bool bEnabled) {
+
+    static void* one_shot_addr = (void *)(module_base_addr + offsets::one_shot_addr);
+
+    static unsigned char one_shot_original[10] = {
+        0xD8, 0x64, 0x24, 0x04, 0xD9, 0x91, 0x28, 0x09, 0x00, 0x00
+    };
+    static unsigned char one_shot_patch[10] = {
+        0xD8, 0xA1, 0x28, 0x09, 0x00, 0x00,
+        0x90,
+        0x90,
+        0x90,
+        0x90
+    };
+
+    if (bEnabled) {
+        memory::Patch(one_shot_addr, one_shot_patch, sizeof(one_shot_patch)); // accidental kills no longer kill
+    } else {
+        memory::Patch(one_shot_addr, one_shot_original, sizeof(one_shot_original));
     }
 
 }
 
 void hacks::ToggleStealth(bool bEnabled) {
 
-    static uintptr_t stealth_addr = module_base_addr + offsets::stealth_addr;
+    static void* stealth_addr = (void *)(module_base_addr + offsets::stealth_addr);
 
     static unsigned char stealth_original[2] = {
         0x3B, 0xC3 // cmp   eax, ebx
@@ -85,9 +120,9 @@ void hacks::ToggleStealth(bool bEnabled) {
     };
 
     if (bEnabled) {
-        memory::Patch((void *)stealth_addr, stealth_patch, sizeof(stealth_patch));
+        memory::Patch(stealth_addr, stealth_patch, sizeof(stealth_patch));
     } else {
-        memory::Patch((void *)stealth_addr, stealth_original, sizeof(stealth_original));
+        memory::Patch(stealth_addr, stealth_original, sizeof(stealth_original));
     }
 
 }

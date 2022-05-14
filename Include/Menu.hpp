@@ -1,7 +1,7 @@
 #ifndef MENU_HPP
 #define MENU_HPP
 
-#include <unordered_map>
+#include <map>
 #include <string>
 
 #define PADDING   50
@@ -29,11 +29,15 @@ private:
     Position menuPosition;
     Resolution gameResolution;
 public:
-    std::unordered_map<std::string, Item> items = []{
-        std::unordered_map<std::string, Item> temp;
+    std::map<std::string, Item> items = []{
+        std::map<std::string, Item> temp;
 
-        temp["God Mode"] = Item{"<F5>", "", false };
-        temp["Teleport"] = Item{"<Shift+T>", "", false };
+        temp["Infinite Ammo"]   = Item{"NUM1", "", false };
+        temp["Infinite Health"] = Item{"NUM2", "", false };
+        temp["One Shot Kill"]   = Item{"NUM3", "", false };
+        temp["No Reactions"]    = Item{"NUM4", "", false };
+        temp["Teleport"]        = Item{"<Shift+T>", "", false };
+        temp["Teleport to..."]  = Item{"<T>", "", false };
 
         return temp;
     }();

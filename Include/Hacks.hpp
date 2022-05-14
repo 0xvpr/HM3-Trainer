@@ -10,7 +10,9 @@
 namespace hacks {
     void TeleportToCam();
     void TeleportToEntity(unsigned target);
-    void ToggleGodMode(bool bEnabled);
+    void ToggleInfiniteAmmo(bool bEnabled);
+    void ToggleInfiniteHealth(bool bEnabled);
+    void ToggleOneShot(bool bEnabled);
     void ToggleStealth(bool bEnabled);
 }
 

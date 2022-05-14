@@ -61,7 +61,7 @@ void render::Menu(LPDIRECT3DDEVICE9 d3dDevice) {
             ++i;
         }
 
-        draw::DrawTextA("End to Eject", menu->X() + 12, menu->Y() + menu->MenuHeight() - 20, 140, 20, draw::color::LightGrey, m_font);
+        draw::DrawTextA("HOME to Eject", menu->X() + 12, menu->Y() + menu->MenuHeight() - 20, 140, 20, draw::color::LightGrey, m_font);
     } else {
         factor = 0.25;
 

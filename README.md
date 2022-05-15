@@ -8,7 +8,7 @@
   
 ## Overview:
 <img src="./resources/Hack-Menu-Screenshot.png"/>
-This is a repository for a Hitman Blood Money Trainer that I built with C++.
+This is a repository for a Hitman Blood Money Trainer that I built with C, C++, and some Assembly.
 
 The main purpose of this project was to get familiar with programming internal GUIs from scratch and  
 familiarize myself with process hooking techniques.
@@ -32,7 +32,12 @@ It is very finicky and will crash/hang otherwise.
 
 The hacks written are:
 - Press <code>END</code> to eject.
-- Press <code>TAB</code> to toggle God mode.
+- Press <code>Numpad 1</code> to toggle Infinite Ammo.
+- Press <code>Numpad 2</code> to toggle Infinite Health.
+- Press <code>Numpad 3</code> to toggle No Reactions
+- Press <code>Numpad 4</code> to toggle One Shot Kill.
+- Press <code>Numpad 5</code> to toggle No Recoil.
+- Press <code>Numpad 6</code> to toggle Flash (5x speed hack).
 - Press <code>[</code> previous entity.
 - Press <code>]</code> next entity.
 - Press <code>T</code> to teleport to current entity.
@@ -50,27 +55,19 @@ These game states include:
 
 ### Build Instructions
 - WSL (Preferred)
-	1. install Visual Studio with CMake support
-	2. cd into project root
-    ```
-    $ make
-    ```
+```
+$ make
+```
 - Windows
-	1. install Visual Studio with CMake support
-    - Visual Studio 2019
-        1. open the project folder in Visual Studio 2019
-        2. ctrl + shift + b
-    - Powershell
-        1. open Powershell in project directory
-        ```
-        $ cmake -G "Visual Studio 2019" -A Win32 -B "build"
-        $ cmake --build "build" --config "Release"
-        ```
+```powershell
+# Go fuck yourself
+```
 
 ### Goals
  - [x] Find reliable weapon pointer.
- - [x] Find reliable entity_list pointer.
- - [x] Find reliable player_health pointer.
+ - [x] Find reliable entity list pointer.
+ - [x] Find reliable player health pointer.
  - [x] Find a way to prevent teleports from crashing the game.
  - [x] Find reliable 'in game' boolean (or other explicit distinction).
+ - [ ] Update player coordinates in real-time (GUI)
  - [ ] Include entity type in GUI main window, just below the entity number.

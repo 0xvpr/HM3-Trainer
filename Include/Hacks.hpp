@@ -14,6 +14,8 @@ namespace hacks {
     void ToggleInfiniteHealth(bool bEnabled);
     void ToggleOneShot(bool bEnabled);
     void ToggleStealth(bool bEnabled);
+    void ToggleNoRecoil(bool bEnabled);
+    void ToggleFlash(bool bEnabled);
 }
 
 #endif /* _HACKS_H */

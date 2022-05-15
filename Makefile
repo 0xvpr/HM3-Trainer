@@ -24,6 +24,10 @@ SOURCES         = $(wildcard $(SOURCE)/*.cpp)
 DEBUG_OBJECTS   = $(patsubst $(SOURCE)/%.cpp,$(DEBUG)/%.o,$(SOURCES))
 RELEASE_OBJECTS = $(patsubst $(SOURCE)/%.cpp,$(RELEASE)/%.o,$(SOURCES))
 
+ASM_SOURCE      = Sources/Assembly
+ASM_SOURCES     = $(wildcard $(ASM_SOURCE)/*.asm)
+ASM_OBJECTS     = $(patsubst $(ASM_SOURCE)/%.asm,$(BUILD)/%.obj,$(ASM_SOURCES))
+
 ### COMMENT IF YOU USE A TOASTER ###
 MAKEFLAGS      += -j$(shell nproc)
 ### COMMENT IF YOU USE A TOASTER ###
@@ -32,18 +36,21 @@ all: $(BIN) $(BUILD) $(PROJECT)
 $(PROJECT): debug release
 
 debug: CFLAGS := -O2 -g $(CFLAGS)
-debug: $(DEBUG_OBJECTS)
-	$(LD) $(DEBUG_OBJECTS) $(LDFLAGS) -o $(BIN)/$(PROJECT)_d.dll
+debug: $(DEBUG_OBJECTS) $(ASM_OBJECTS)
+	$(LD) $(DEBUG_OBJECTS) $(ASM_OBJECTS) $(LDFLAGS) -o $(BIN)/$(PROJECT)_d.dll
 
 release: CFLAGS := -O3 -fvisibility=hidden -ffast-math $(CFLAGS)
-release: $(RELEASE_OBJECTS)
-	$(LD) $(RELEASE_OBJECTS) $(LDFLAGS) -o $(BIN)/$(PROJECT).dll
+release: $(RELEASE_OBJECTS) $(ASM_OBJECTS)
+	$(LD) $(RELEASE_OBJECTS) $(ASM_OBJECTS) $(LDFLAGS) -o $(BIN)/$(PROJECT).dll
 
 $(DEBUG_OBJECTS): $(DEBUG)/%.o : $(SOURCE)/%.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@ 
 
 $(RELEASE_OBJECTS): $(RELEASE)/%.o : $(SOURCE)/%.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+$(ASM_OBJECTS): $(BUILD)/%.obj : $(ASM_SOURCE)/%.asm
+	$(ASM) $(ASFLAGS) $< -o $@
 
 .PHONY: $(BIN)
 $(BIN):

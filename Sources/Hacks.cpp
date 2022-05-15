@@ -1,18 +1,20 @@
-#include "Offsets.hpp"
-#include "Entity.hpp"
 #include "Hacks.hpp"
+
 #include "Memory.hpp"
+#include "Entity.hpp"
+#include "Offsets.hpp"
+#include "Assembly.hpp"
 
 extern uintptr_t module_base_addr;
 
 void hacks::TeleportToCam() {
 
-    auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz_addr, offsets::player_xyz_offsets);
-    auto entityList = *(EntityList **)(module_base_addr + offsets::entity_addr);
-    auto cam = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::cam_xyz_addr, offsets::cam_xyz_offsets);
+    auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz, offsets::player_xyz_offsets);
+    auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
+    auto cam = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::cam_xyz, offsets::cam_xyz_offsets);
 
     auto bInGame = [&entityList]{
-        return entityList->n_entities > 1 && entityList->n_entities < 167;
+        return entityList->n_entities > 7 && entityList->n_entities < 167;
     }();
 
     if (bInGame) {
@@ -25,13 +27,12 @@ void hacks::TeleportToCam() {
 
 void hacks::TeleportToEntity(unsigned target) {
 
-    auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz_addr, offsets::player_xyz_offsets);
-    auto entityList = *(EntityList **)(module_base_addr + offsets::entity_addr);
+    auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz, offsets::player_xyz_offsets);
+    auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
     auto entity = entityList->ents[target].entity;
 
     auto bInGame = [&entityList]{
-        //auto entityList = *(EntityList **)(module_base_addr + offsets::entity_addr);
-        return entityList->n_entities > 1 && entityList->n_entities < 167;
+        return entityList->n_entities > 7 && entityList->n_entities < 167;
     }();
 
     if (bInGame) {
@@ -44,26 +45,25 @@ void hacks::TeleportToEntity(unsigned target) {
 
 void hacks::ToggleInfiniteAmmo(bool bEnabled) {
 
-    static void* ammo_addr = (void *)(module_base_addr + offsets::ammo_addr);
+    static void* ammo_addr = (void *)(module_base_addr + offsets::ammo);
 
     static unsigned char ammo_original[1] = {
-        0x49
+        0x49 // dec     eax
     };
     static unsigned char ammo_patch[1] = {
-        0x40
+        0x40 // 
     };
 
     if (bEnabled) {
         memory::Patch(ammo_addr, ammo_patch, sizeof(ammo_patch));
     } else {
-
         memory::Patch(ammo_addr, ammo_original, sizeof(ammo_original));
     }
 
 }
 void hacks::ToggleInfiniteHealth(bool bEnabled) {
 
-    static void* health_addr = (void *)(module_base_addr + offsets::health_addr);
+    static void* health_addr = (void *)(module_base_addr + offsets::health);
 
     static unsigned char health_original[4] = {
         0xD8, 0x64, 0x24, 0x08
@@ -83,10 +83,9 @@ void hacks::ToggleInfiniteHealth(bool bEnabled) {
 
 }
 
-
 void hacks::ToggleOneShot(bool bEnabled) {
 
-    static void* one_shot_addr = (void *)(module_base_addr + offsets::one_shot_addr);
+    static void* one_shot_addr = (void *)(module_base_addr + offsets::one_shot);
 
     static unsigned char one_shot_original[10] = {
         0xD8, 0x64, 0x24, 0x04, 0xD9, 0x91, 0x28, 0x09, 0x00, 0x00
@@ -109,7 +108,7 @@ void hacks::ToggleOneShot(bool bEnabled) {
 
 void hacks::ToggleStealth(bool bEnabled) {
 
-    static void* stealth_addr = (void *)(module_base_addr + offsets::stealth_addr);
+    static void* stealth_addr = (void *)(module_base_addr + offsets::stealth);
 
     static unsigned char stealth_original[2] = {
         0x3B, 0xC3 // cmp   eax, ebx
@@ -123,6 +122,49 @@ void hacks::ToggleStealth(bool bEnabled) {
         memory::Patch(stealth_addr, stealth_patch, sizeof(stealth_patch));
     } else {
         memory::Patch(stealth_addr, stealth_original, sizeof(stealth_original));
+    }
+
+}
+
+void hacks::ToggleNoRecoil(bool bEnabled) {
+
+    static void* recoil_addr = (void *)(module_base_addr + offsets::recoil);
+    static void* no_recoil_tramp_addr = (void *)NoRecoilTramp;
+
+    static unsigned char recoil_original[6] = {
+        0xD9, 0x99, 0xF8, 0x00, 0x00, 0x00
+    };
+
+    if (bEnabled) {
+        memory::Detour(recoil_addr, no_recoil_tramp_addr, sizeof(recoil_original));
+    } else {
+        memory::Patch(recoil_addr, recoil_original, sizeof(recoil_original)); 
+    }
+
+}
+
+void hacks::ToggleFlash(bool bEnabled) {
+
+    static void* mul_addr   = (void *)(module_base_addr + offsets::mul);
+    static void* mul_func   = (void *)(Multiplier);
+
+    static void* speed_addr = (void *)(module_base_addr + offsets::speed);
+    static void* flash_func = (void *)(Flash);
+
+    static unsigned char mul_original[7] = {
+        0xC7, 0x46, 0x14, 0x00, 0x00, 0x80, 0x3F // mov     [esi + 0x14], 3F800000
+    };
+    static unsigned char speed_original[6] = {
+        0xD9, 0x59, 0x24,                        // fstp    dword ptr [ecx + 0x24]
+        0xC2, 0x04, 0x00                         // ret     4
+    };
+
+    if (bEnabled) {
+        memory::Detour(speed_addr, flash_func, sizeof(speed_original));
+        memory::Detour(mul_addr, mul_func, sizeof(mul_original));
+    } else {
+        memory::Patch(speed_addr, speed_original, sizeof(speed_original)); 
+        memory::Patch(mul_addr, mul_original, sizeof(mul_original)); 
     }
 
 }

@@ -5,11 +5,14 @@
 extern "C" {
 #endif // __cplusplus
 
-int foo(void);
+void NoRecoilTramp(void);
+
+void Flash(void);
+
+void Multiplier(void);
 
 #ifdef __cplusplus
 }
 #endif // __cplusplus
-
 
 #endif // ASSEMBLY_HPP

@@ -13,7 +13,7 @@ This is a repository for a Hitman Blood Money Trainer that I built with C, C++, 
 The main purpose of this project was to get familiar with programming internal GUIs from scratch and  
 familiarize myself with process hooking techniques.
 
-[Demonstration](https://www.youtube.com/watch?v=0btTuzX9aQU)
+[Demonstration](https://www.youtube.com/watch?v=3Xt5_FahKMs)
 of God Mode and Teleport hacks.  
 
 ## Table of Contents

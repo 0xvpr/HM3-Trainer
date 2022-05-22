@@ -1,5 +1,5 @@
 -std=c++2a
---target=i686-pc-windows-posix
+--target=i686-pc-windows-msvc
 -isystem/usr/lib/gcc/i686-w64-mingw32/9.3-win32/include
 -isystem/usr/lib/gcc/i686-w64-mingw32/9.3-win32/include-fixed
 -isystem/usr/lib/gcc/i686-w64-mingw32/9.3-win32/../../../../i686-w64-mingw32/include

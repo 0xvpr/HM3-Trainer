@@ -10,6 +10,7 @@ namespace offsets {
     constexpr unsigned stealth                    = 0x149C2D;
     constexpr unsigned health                     = 0x1FB973;
     constexpr unsigned ammo                       = 0x1140E7;
+    constexpr unsigned clip_counter               = 0x114100;
     constexpr unsigned recoil                     = 0x249BCC;
     constexpr unsigned mul                        = 0x22CF9A;
     constexpr unsigned speed                      = 0x22BB11;

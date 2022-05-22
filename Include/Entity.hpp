@@ -8,6 +8,7 @@ struct Entity {
     float z;
     int _0x928[336];
     float hp;
+
 };
 
 struct EntityObject {

@@ -46,6 +46,7 @@ void hacks::TeleportToEntity(unsigned target) {
 void hacks::ToggleInfiniteAmmo(bool bEnabled) {
 
     static void* ammo_addr = (void *)(module_base_addr + offsets::ammo);
+    static void* clip_counter_addr = (void *)(module_base_addr + offsets::clip_counter);
 
     static unsigned char ammo_original[1] = {
         0x49 // dec     eax
@@ -54,10 +55,24 @@ void hacks::ToggleInfiniteAmmo(bool bEnabled) {
         0x40 // 
     };
 
+    static unsigned char clip_counter_original[6] {
+        0xFF, 0x8E, 0x9C, 0x00, 0x00, 0x00 // dec   [esi + 0x9C]
+    };
+    static unsigned char clip_counter_patch[6] {
+        0x90, // nop
+        0x90, // nop
+        0x90, // nop
+        0x90, // nop
+        0x90, // nop
+        0x90  // nop
+    };
+
     if (bEnabled) {
         memory::Patch(ammo_addr, ammo_patch, sizeof(ammo_patch));
+        memory::Patch(clip_counter_addr, clip_counter_patch, sizeof(clip_counter_patch));
     } else {
         memory::Patch(ammo_addr, ammo_original, sizeof(ammo_original));
+        memory::Patch(clip_counter_addr, clip_counter_original, sizeof(clip_counter_original));
     }
 
 }

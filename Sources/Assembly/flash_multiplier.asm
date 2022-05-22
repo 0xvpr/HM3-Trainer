@@ -2,11 +2,11 @@ segment .text
 global _Multiplier
 
 _Multiplier:
-    push    dword [speed]
+    push    dword [rel speed]
     pop     dword [esi + 0x14]
-    jmp     dword [return]
+    jmp     dword [rel return]
     int3
 speed:
-    dd      0x40A00000
+    dd      5.
 return:
-    dd      0x0062CFA1
+    dd      0x62CFA1

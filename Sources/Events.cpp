@@ -64,12 +64,14 @@ bool events::HandleKeyboard(void) {
             hacks::ToggleOneShot(false);
             hacks::ToggleStealth(false);
             hacks::ToggleNoRecoil(false);
+            hacks::ToggleFlash(false);
         } else {
             hacks::ToggleInfiniteAmmo(menu->items["NUM1 - Infinite Ammo"].bEnabled);
             hacks::ToggleInfiniteHealth(menu->items["NUM2 - Infinite Health"].bEnabled);
             hacks::ToggleOneShot(menu->items["NUM3 - One Shot Kill"].bEnabled);
             hacks::ToggleStealth(menu->items["NUM4 - No Reactions"].bEnabled);
             hacks::ToggleNoRecoil(menu->items["NUM5 - No Recoil"].bEnabled);
+            hacks::ToggleFlash(menu->items["NUM6 - Flash"].bEnabled);
         }
 
     }
@@ -100,20 +102,20 @@ bool events::HandleKeyboard(void) {
     }
 
     // Previous Entity
-    if ((GetAsyncKeyState(VK_OEM_4) & 1) > 0 && bCheatsEnabled) {
+    if (bCheatsEnabled && (GetAsyncKeyState(VK_OEM_4) & 1) > 0) {
         SetCurrentEntity(-1);
     }
 
     // Next Entity
-    if ((GetAsyncKeyState(VK_OEM_6) & 1) > 0 && bCheatsEnabled) {
+    if (bCheatsEnabled && (GetAsyncKeyState(VK_OEM_6) & 1) > 0) {
         SetCurrentEntity(1);
     }
 
-    if (((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && (GetAsyncKeyState('T') & 1) && bCheatsEnabled) {
+    if (bCheatsEnabled && ((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && (GetAsyncKeyState('T') & 1)) {
         hacks::TeleportToCam();
     }
 
-    if (!((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && (GetAsyncKeyState('T') & 1) && bCheatsEnabled) {
+    if (bCheatsEnabled && !((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && (GetAsyncKeyState('T') & 1)) {
         hacks::TeleportToEntity(current_entity);
     }
 

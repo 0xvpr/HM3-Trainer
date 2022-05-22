@@ -8,7 +8,7 @@
 #include <tlhelp32.h>
 
 namespace hacks {
-    void TeleportToCam();
+    void TeleportToCam(void);
     void TeleportToEntity(unsigned target);
     void ToggleInfiniteAmmo(bool bEnabled);
     void ToggleInfiniteHealth(bool bEnabled);

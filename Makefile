@@ -2,7 +2,7 @@ PROJECT         = shitman3
 
 CC              = i686-w64-mingw32-g++-posix
 CFLAGS          = -std=c++2a -masm=intel -Wall -Wextra -Werror -Wshadow -Wpedantic -Wconversion\
-                  -Wno-missing-field-initializers
+                  -Wno-missing-field-initializers -Wno-attributes
 
 LD              = i686-w64-mingw32-g++-posix
 LDFLAGS         = -nostdinc++ -static -s -shared -ld3d9 -ld3dx9

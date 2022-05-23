@@ -233,7 +233,7 @@ void hacks::KillEveryone(void) {
         size_t n_entities = entityList->n_entities; 
         for (size_t i = 0; i < n_entities; ++i) {
             auto ent = entityList->entities[i].entity;
-            if (ent->vtable->IsVisible(ent)) {
+            if (ent->vtable->IsVisible(ent) && (ent->vtable->GetWeapon(ent) == 0)) {
                 ent->vtable->Die(ent);
             }
         }

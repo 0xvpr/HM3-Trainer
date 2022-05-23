@@ -5,7 +5,7 @@ CFLAGS          = -std=c++2a -masm=intel -Wall -Wextra -Werror -Wshadow -Wpedant
                   -Wno-missing-field-initializers -Wno-attributes
 
 LD              = i686-w64-mingw32-g++-posix
-LDFLAGS         = -nostdinc++ -static -s -shared -ld3d9 -ld3dx9
+LDFLAGS         = -nostdinc++ -static -shared -ld3d9 -ld3dx9
 
 ASM             = nasm
 ASFLAGS         = -f win32
@@ -36,11 +36,12 @@ all: $(BIN) $(BUILD) $(PROJECT)
 $(PROJECT): debug release
 
 debug: CFLAGS := -O2 -g $(CFLAGS)
-debug: $(DEBUG_OBJECTS) $(ASM_OBJECTS)
+debug: $(ASM_OBJECTS) $(DEBUG_OBJECTS)
 	$(LD) $(DEBUG_OBJECTS) $(ASM_OBJECTS) $(LDFLAGS) -o $(BIN)/$(PROJECT)_d.dll
 
 release: CFLAGS := -O3 -fvisibility=hidden -ffast-math $(CFLAGS)
-release: $(RELEASE_OBJECTS) $(ASM_OBJECTS)
+release: LDFLAGS := -s $(LDFLAGS)
+release: $(ASM_OBJECTS) $(RELEASE_OBJECTS)
 	$(LD) $(RELEASE_OBJECTS) $(ASM_OBJECTS) $(LDFLAGS) -o $(BIN)/$(PROJECT).dll
 
 $(DEBUG_OBJECTS): $(DEBUG)/%.o : $(SOURCE)/%.cpp

@@ -32,17 +32,17 @@ public:
     std::map<unsigned, Item> items = []{
         std::map<unsigned, Item> temp;
 
-        temp[0] = Item{"NUM1", "Infinite Ammo", false };
-        temp[1] = Item{"NUM2", "Infinite Health", false };
-        temp[2] = Item{"NUM3", "One Shot Kill", false };
-        temp[3] = Item{"NUM4", "No Reactions", false };
-        temp[4] = Item{"NUM5", "No Recoil", false };
-        temp[5] = Item{"NUM6", "Flash", false };
-        temp[6] = Item{"NUM9", "Kill Everyone", false };
-        temp[7] = Item{"<Shift+T>", "Teleport to Cam", false };
-        temp[8] = Item{"<Shift+X>", "Kill Cam Target", false };
-        temp[9] = Item{"<T>", "Teleport to Target", false };
-        temp[10] = Item{"<X>", "Kill Target", false };
+        temp[ 0] = Item{"NUM1",    "Infinite Ammo",      false };
+        temp[ 1] = Item{"NUM2",    "Infinite Health",    false };
+        temp[ 2] = Item{"NUM3",    "One Shot Kill",      false };
+        temp[ 3] = Item{"NUM4",    "No Reactions",       false };
+        temp[ 4] = Item{"NUM5",    "No Recoil",          false };
+        temp[ 5] = Item{"NUM6",    "Flash",              false };
+        temp[ 6] = Item{"NUM9",    "Kill Everyone",      false };
+        temp[ 7] = Item{"Shift+T", "Teleport to Cam",    false };
+        temp[ 8] = Item{"Shift+X", "Kill Cam Target",    false };
+        temp[ 9] = Item{"T",       "Teleport to Target", false };
+        temp[10] = Item{"X",       "Kill Target",        false };
 
         return temp;
     }();

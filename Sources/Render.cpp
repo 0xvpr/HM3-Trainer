@@ -41,20 +41,20 @@ void render::Menu(LPDIRECT3DDEVICE9 d3dDevice) {
         factor = 1.0;
 
         // Title Template
-        draw::DrawFilledRect(menu->X(), menu->Y(), 200, menu->MenuHeight(), draw::color::DarkGrey, d3dDevice);
-        draw::DrawBorderBox(menu->X(), menu->Y(), 200, menu->MenuHeight(), 4, draw::color::Black, d3dDevice);
+        draw::DrawFilledRect(menu->X(), menu->Y(), 240, menu->MenuHeight(), draw::color::DarkGrey, d3dDevice);
+        draw::DrawBorderBox(menu->X(), menu->Y(), 240, menu->MenuHeight(), 4, draw::color::Black, d3dDevice);
 
         // Draw status
         if (bCheatsEnabled) {
-            draw::DrawTextA("[ Enabled ]", menu->X() + 7, menu->Y() + 10, 200, 20, draw::color::Green, m_font);
+            draw::DrawTextA("[ Hacks Enabled ]", menu->X() + 7, menu->Y() + 10, 200, 20, draw::color::Green, m_font);
         } else {
-            draw::DrawTextA("[ Disabled ]", menu->X() + 7, menu->Y() + 10, 200, 20, draw::color::LightGrey, m_font);
+            draw::DrawTextA("[ Hacks Disabled ]", menu->X() + 7, menu->Y() + 10, 200, 20, draw::color::LightGrey, m_font);
         }
 
         // Draw Cheats
         int i = 1;
         for (const auto& [key, value] : menu->items) {
-            draw::DrawTextA((value.hotkey + " - " + value.misc).c_str(), menu->X() + 12, menu->Y() + 12 + (i * 25), 200, 20, (value.bEnabled ? draw::color::Green : draw::color::LightGrey), m_font);
+            draw::DrawTextA((value.hotkey + ": " + value.misc).c_str(), menu->X() + 12, menu->Y() + 12 + (i * 25), 200, 20, (value.bEnabled ? draw::color::Green : draw::color::LightGrey), m_font);
             ++i;
         }
 

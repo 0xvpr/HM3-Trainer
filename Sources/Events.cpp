@@ -5,13 +5,27 @@
 #include "Entity.hpp"
 #include "Offsets.hpp"
 
-extern uintptr_t module_base_addr;
+enum cheats {
+    infinite_ammo   = 0,
+    infinite_health = 1,
+    one_shot_kill   = 2,
+    no_reactions    = 3,
+    no_recoil       = 4,
+    flash           = 5,
+    teleport_to_cam = 6,
+    kill_cam_target = 7,
+    teleport_to_ent = 8,
+    kill_target_ent = 9,
+    kill_everyone   = 10
+};
 
 bool bCheatsEnabled = false;
 
+extern uintptr_t module_base_addr;
+
 extern HackMenu* menu;
 
-static unsigned current_entity = 0;
+unsigned current_entity = 0;
 
 static inline
 void SetCurrentEntity(int operation) {
@@ -66,39 +80,42 @@ bool events::HandleKeyboard(void) {
             hacks::ToggleNoRecoil(false);
             hacks::ToggleFlash(false);
         } else {
-            hacks::ToggleInfiniteAmmo(menu->items["NUM1 - Infinite Ammo"].bEnabled);
-            hacks::ToggleInfiniteHealth(menu->items["NUM2 - Infinite Health"].bEnabled);
-            hacks::ToggleOneShot(menu->items["NUM3 - One Shot Kill"].bEnabled);
-            hacks::ToggleStealth(menu->items["NUM4 - No Reactions"].bEnabled);
-            hacks::ToggleNoRecoil(menu->items["NUM5 - No Recoil"].bEnabled);
-            hacks::ToggleFlash(menu->items["NUM6 - Flash"].bEnabled);
+            hacks::ToggleInfiniteAmmo(menu->items[cheats::infinite_ammo].bEnabled);
+            hacks::ToggleInfiniteHealth(menu->items[cheats::infinite_health].bEnabled);
+            hacks::ToggleOneShot(menu->items[cheats::one_shot_kill].bEnabled);
+            hacks::ToggleStealth(menu->items[cheats::no_reactions].bEnabled);
+            hacks::ToggleNoRecoil(menu->items[cheats::no_recoil].bEnabled);
+            hacks::ToggleFlash(menu->items[cheats::flash].bEnabled);
         }
 
     }
 
     if (bCheatsEnabled && GetAsyncKeyState(VK_NUMPAD1) & 1) {
-        menu->items["NUM1 - Infinite Ammo"].bEnabled = !menu->items["NUM1 - Infinite Ammo"].bEnabled;
-        hacks::ToggleInfiniteAmmo(menu->items["NUM1 - Infinite Ammo"].bEnabled);
+        menu->items[cheats::infinite_ammo].bEnabled = !menu->items[cheats::infinite_ammo].bEnabled;
+        hacks::ToggleInfiniteAmmo(menu->items[cheats::infinite_ammo].bEnabled);
     }
     if (bCheatsEnabled && GetAsyncKeyState(VK_NUMPAD2) & 1) {
-        menu->items["NUM2 - Infinite Health"].bEnabled = !menu->items["NUM2 - Infinite Health"].bEnabled;
-        hacks::ToggleInfiniteHealth(menu->items["NUM2 - Infinite Health"].bEnabled);
+        menu->items[cheats::infinite_health].bEnabled = !menu->items[cheats::infinite_health].bEnabled;
+        hacks::ToggleInfiniteHealth(menu->items[cheats::infinite_health].bEnabled);
     }
     if (bCheatsEnabled && GetAsyncKeyState(VK_NUMPAD3) & 1) {
-        menu->items["NUM3 - One Shot Kill"].bEnabled = !menu->items["NUM3 - One Shot Kill"].bEnabled;
-        hacks::ToggleOneShot(menu->items["NUM3 - One Shot Kill"].bEnabled); 
+        menu->items[cheats::one_shot_kill].bEnabled = !menu->items[cheats::one_shot_kill].bEnabled;
+        hacks::ToggleOneShot(menu->items[cheats::one_shot_kill].bEnabled); 
     }
     if (bCheatsEnabled && GetAsyncKeyState(VK_NUMPAD4) & 1) {
-        menu->items["NUM4 - No Reactions"].bEnabled = !menu->items["NUM4 - No Reactions"].bEnabled;
-        hacks::ToggleStealth(menu->items["NUM4 - No Reactions"].bEnabled);
+        menu->items[cheats::no_reactions].bEnabled = !menu->items[cheats::no_reactions].bEnabled;
+        hacks::ToggleStealth(menu->items[cheats::no_reactions].bEnabled);
     }
     if (bCheatsEnabled && GetAsyncKeyState(VK_NUMPAD5) & 1) {
-        menu->items["NUM5 - No Recoil"].bEnabled = !menu->items["NUM5 - No Recoil"].bEnabled;
-        hacks::ToggleNoRecoil(menu->items["NUM5 - No Recoil"].bEnabled);
+        menu->items[cheats::no_recoil].bEnabled = !menu->items[cheats::no_recoil].bEnabled;
+        hacks::ToggleNoRecoil(menu->items[cheats::no_recoil].bEnabled);
     }
     if (bCheatsEnabled && GetAsyncKeyState(VK_NUMPAD6) & 1) {
-        menu->items["NUM6 - Flash"].bEnabled = !menu->items["NUM6 - Flash"].bEnabled;
-        hacks::ToggleFlash(menu->items["NUM6 - Flash"].bEnabled);
+        menu->items[cheats::flash].bEnabled = !menu->items[cheats::flash].bEnabled;
+        hacks::ToggleFlash(menu->items[cheats::flash].bEnabled);
+    }
+    if (bCheatsEnabled && GetAsyncKeyState(VK_NUMPAD9) & 1) {
+        hacks::KillEveryone();
     }
 
     // Previous Entity
@@ -115,8 +132,16 @@ bool events::HandleKeyboard(void) {
         hacks::TeleportToCam();
     }
 
+    if (bCheatsEnabled && !((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && GetAsyncKeyState('X') & 1) {
+        hacks::KillCurrentEntity(current_entity);
+    }
+
     if (bCheatsEnabled && !((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && (GetAsyncKeyState('T') & 1)) {
         hacks::TeleportToEntity(current_entity);
+    }
+
+    if (bCheatsEnabled && ((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && GetAsyncKeyState('X') & 1) {
+        hacks::KillTargetInCrosshair();
     }
 
     if (GetAsyncKeyState(VK_HOME)) {

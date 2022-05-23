@@ -16,6 +16,9 @@ namespace hacks {
     void ToggleStealth(bool bEnabled);
     void ToggleNoRecoil(bool bEnabled);
     void ToggleFlash(bool bEnabled);
+    void KillCurrentEntity(unsigned target);
+    void KillTargetInCrosshair(void);
+    void KillEveryone(void);
 }
 
 #endif /* _HACKS_H */

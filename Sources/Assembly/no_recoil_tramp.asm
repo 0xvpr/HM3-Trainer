@@ -2,11 +2,9 @@ segment .text
 global _NoRecoilTramp
 
 _NoRecoilTramp:
-    push    eax
-    mov     eax, dword [rel mul]
+    push    dword [rel mul]
     fstp    dword [ecx + 0xF8]
-    mov     dword [ecx + 0xF8], eax
-    pop     eax
+    pop     dword [ecx + 0xF8]
     jmp     dword [rel return]
 return:
     dd      0x649BD2

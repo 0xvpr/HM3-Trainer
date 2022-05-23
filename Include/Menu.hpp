@@ -29,17 +29,20 @@ private:
     Position menuPosition;
     Resolution gameResolution;
 public:
-    std::map<std::string, Item> items = []{
-        std::map<std::string, Item> temp;
+    std::map<unsigned, Item> items = []{
+        std::map<unsigned, Item> temp;
 
-        temp["NUM1 - Infinite Ammo"]   = Item{"NUM1", "", false };
-        temp["NUM2 - Infinite Health"] = Item{"NUM2", "", false };
-        temp["NUM3 - One Shot Kill"]   = Item{"NUM3", "", false };
-        temp["NUM4 - No Reactions"]    = Item{"NUM4", "", false };
-        temp["NUM5 - No Recoil"]       = Item{"NUM5", "", false };
-        temp["NUM6 - Flash"]           = Item{"NUM6", "", false };
-        temp["SHIFT+T - Teleport"]     = Item{"<Shift+T>", "", false };
-        temp["T - Teleport to..."]     = Item{"<T>", "", false };
+        temp[0] = Item{"NUM1", "Infinite Ammo", false };
+        temp[1] = Item{"NUM2", "Infinite Health", false };
+        temp[2] = Item{"NUM3", "One Shot Kill", false };
+        temp[3] = Item{"NUM4", "No Reactions", false };
+        temp[4] = Item{"NUM5", "No Recoil", false };
+        temp[5] = Item{"NUM6", "Flash", false };
+        temp[6] = Item{"NUM9", "Kill Everyone", false };
+        temp[7] = Item{"<Shift+T>", "Teleport to Cam", false };
+        temp[8] = Item{"<Shift+X>", "Kill Cam Target", false };
+        temp[9] = Item{"<T>", "Teleport to Target", false };
+        temp[10] = Item{"<X>", "Kill Target", false };
 
         return temp;
     }();

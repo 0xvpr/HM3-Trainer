@@ -4,6 +4,8 @@
 #include "Drawing.hpp"
 #include <stdio.h>
 
+extern unsigned int current_entity;
+
 extern bool bMaximizeMenu;
 extern bool bCheatsEnabled;
 
@@ -25,20 +27,15 @@ void render::Menu(LPDIRECT3DDEVICE9 d3dDevice) {
 
     D3DDISPLAYMODE  d3dDisplayMode;
     float           factor;
-    char            buffer[4];
+    char            buffer[32];
 
     // Get Resolution
     IDirect3DDevice9_GetDisplayMode(d3dDevice, 0, &d3dDisplayMode);
 
     // Draw Height
     memset(buffer, 0, sizeof(buffer));
-    snprintf(buffer, sizeof(buffer), "Height: %u", d3dDisplayMode.Height);
+    snprintf(buffer, sizeof(buffer), "Current Entity: %u", current_entity);
     draw::DrawTextA(buffer, menu->X(), menu->Y() - 25, 200, 20, draw::color::LightGrey, m_font);
-
-    // Draw Width
-    memset(buffer, 0, sizeof(buffer));
-    snprintf(buffer, sizeof(buffer), "Width: %u", d3dDisplayMode.Width);
-    draw::DrawTextA(buffer, menu->X() + 200, menu->Y() - 25, 200, 20, draw::color::LightGrey, m_font);
 
     if (bMaximizeMenu) {
         factor = 1.0;
@@ -57,7 +54,7 @@ void render::Menu(LPDIRECT3DDEVICE9 d3dDevice) {
         // Draw Cheats
         int i = 1;
         for (const auto& [key, value] : menu->items) {
-            draw::DrawTextA(key.c_str(), menu->X() + 12, menu->Y() + 12 + (i * 25), 200, 20, (value.bEnabled ? draw::color::Green : draw::color::LightGrey), m_font);
+            draw::DrawTextA((value.hotkey + " - " + value.misc).c_str(), menu->X() + 12, menu->Y() + 12 + (i * 25), 200, 20, (value.bEnabled ? draw::color::Green : draw::color::LightGrey), m_font);
             ++i;
         }
 

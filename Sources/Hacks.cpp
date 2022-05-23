@@ -5,6 +5,8 @@
 #include "Offsets.hpp"
 #include "Assembly.hpp"
 
+#include <math.h>
+
 extern uintptr_t module_base_addr;
 
 void hacks::TeleportToCam() {
@@ -29,7 +31,7 @@ void hacks::TeleportToEntity(unsigned target) {
 
     auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz, offsets::player_xyz_offsets);
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
-    auto entity = entityList->ents[target].entity;
+    auto entity = entityList->entities[target].entity;
 
     auto bInGame = [&entityList]{
         return entityList->n_entities > 7 && entityList->n_entities < 167;
@@ -180,6 +182,61 @@ void hacks::ToggleFlash(bool bEnabled) {
     } else {
         memory::Patch(speed_addr, speed_original, sizeof(speed_original)); 
         memory::Patch(mul_addr, mul_original, sizeof(mul_original)); 
+    }
+
+}
+
+void hacks::KillCurrentEntity(unsigned target) {
+
+    auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
+
+    auto bInGame = [&entityList]{
+        return entityList->n_entities > 7 && entityList->n_entities < 167;
+    }();
+
+    if (bInGame) {
+        auto ent = entityList->entities[target].entity;
+        ent->vtable->Die(ent);
+    }
+}
+
+void hacks::KillTargetInCrosshair(void) {
+
+    auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
+    auto cam = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::cam_xyz, offsets::cam_xyz_offsets);
+
+    auto bInGame = [&entityList]{
+        return entityList->n_entities > 7 && entityList->n_entities < 167;
+    }();
+
+    if (bInGame) {
+        size_t n_entities = entityList->n_entities;
+        for (size_t i = 0; i < n_entities; ++i) {
+            auto ent = entityList->entities[i].entity;
+            if (fabs(cam->x - ent->x) < 50.f && fabs(cam->y - ent->y) < 50.f) {
+                ent->vtable->Die(ent);
+            }
+        }
+    }
+
+}
+
+void hacks::KillEveryone(void) {
+
+    auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
+
+    auto bInGame = [&entityList]() {
+        return (entityList->n_entities > 7 && entityList->n_entities < 167);
+    };
+
+    if (bInGame()) {
+        size_t n_entities = entityList->n_entities; 
+        for (size_t i = 0; i < n_entities; ++i) {
+            auto ent = entityList->entities[i].entity;
+            if (ent->vtable->IsVisible(ent)) {
+                ent->vtable->Die(ent);
+            }
+        }
     }
 
 }

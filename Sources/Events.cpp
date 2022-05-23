@@ -133,7 +133,7 @@ bool events::HandleKeyboard(void) {
     }
 
     if (bCheatsEnabled && !((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && GetAsyncKeyState('X') & 1) {
-        hacks::KillTargetInCrosshair();
+        hacks::KillCurrentEntity(current_entity);
     }
 
     if (bCheatsEnabled && !((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && (GetAsyncKeyState('T') & 1)) {
@@ -141,7 +141,7 @@ bool events::HandleKeyboard(void) {
     }
 
     if (bCheatsEnabled && ((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && GetAsyncKeyState('X') & 1) {
-        hacks::KillCurrentEntity(current_entity);
+        hacks::KillTargetInCrosshair();
     }
 
     if (GetAsyncKeyState(VK_HOME)) {

@@ -31,17 +31,20 @@ The DLL must be injected WHILE the game is running in the foreground.
 It is very finicky and will crash/hang otherwise.
 
 The hacks written are:
-- Press <code>END</code> to eject.
 - Press <code>Numpad 1</code> to toggle Infinite Ammo.
 - Press <code>Numpad 2</code> to toggle Infinite Health.
 - Press <code>Numpad 3</code> to toggle No Reactions
 - Press <code>Numpad 4</code> to toggle One Shot Kill.
 - Press <code>Numpad 5</code> to toggle No Recoil.
 - Press <code>Numpad 6</code> to toggle Flash (5x speed hack).
+- Press <code>Numpad 9</code> to kill all enemies in a level.
+- Press <code>Shift + T</code> to teleport to current camera coordinates.
+- Press <code>Shift + X</code> to kill the entity at the current camera coordinates.
+- Press <code>T</code> to teleport to current entity.
+- Press <code>X</code> to kill the current entity.
 - Press <code>[</code> previous entity.
 - Press <code>]</code> next entity.
-- Press <code>T</code> to teleport to current entity.
-- Press <code>Shift + T</code> to teleport to current camera coordinates.
+- Press <code>END</code> to eject.
 
 ### Known issues
 One shot kill currently prevents "Accidental deaths" from counting as killed targets.  

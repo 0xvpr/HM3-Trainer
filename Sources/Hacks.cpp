@@ -9,17 +9,18 @@
 
 extern uintptr_t module_base_addr;
 
+[[nodiscard]]
+static inline bool IsInGame(void) {
+    auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
+    return ( entityList->n_entities > 7 && entityList->n_entities < 167 );
+}
+
 void hacks::TeleportToCam() {
 
     auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz, offsets::player_xyz_offsets);
-    auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
     auto cam = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::cam_xyz, offsets::cam_xyz_offsets);
 
-    auto bInGame = [&entityList]{
-        return entityList->n_entities > 7 && entityList->n_entities < 167;
-    }();
-
-    if (bInGame) {
+    if (IsInGame()) {
         player->x = cam->x +  5;
         player->y = cam->y + 10;
         player->z = cam->z +  5;
@@ -33,11 +34,7 @@ void hacks::TeleportToEntity(unsigned target) {
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
     auto entity = entityList->entities[target].entity;
 
-    auto bInGame = [&entityList]{
-        return entityList->n_entities > 7 && entityList->n_entities < 167;
-    }();
-
-    if (bInGame) {
+    if (IsInGame()) {
         player->x = entity->x +  5;
         player->y = entity->y + 10;
         player->z = entity->z +  5;
@@ -190,13 +187,11 @@ void hacks::KillCurrentEntity(unsigned target) {
 
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
 
-    auto bInGame = [&entityList]{
-        return entityList->n_entities > 7 && entityList->n_entities < 167;
-    }();
-
-    if (bInGame) {
+    if (IsInGame()) {
         auto ent = entityList->entities[target].entity;
-        ent->vtable->Die(ent);
+        float force_vector_a[3] = { 0.f, 0.f, -1000.f };
+        float force_vector_b[3] = { 0.f, 0.f, 1000.f };
+        ent->vtable->DieByForce(ent, force_vector_a, force_vector_b, 100, 1);
     }
 }
 
@@ -205,16 +200,14 @@ void hacks::KillTargetInCrosshair(void) {
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
     auto cam = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::cam_xyz, offsets::cam_xyz_offsets);
 
-    auto bInGame = [&entityList]{
-        return entityList->n_entities > 7 && entityList->n_entities < 167;
-    }();
-
-    if (bInGame) {
+    if (IsInGame()) {
         size_t n_entities = entityList->n_entities;
         for (size_t i = 0; i < n_entities; ++i) {
             auto ent = entityList->entities[i].entity;
             if (fabs(cam->x - ent->x) < 50.f && fabs(cam->y - ent->y) < 50.f) {
-                ent->vtable->Die(ent);
+                float force_vector_a[3] = { 0.f, 0.f, -1000.f };
+                float force_vector_b[3] = { 0.f, 0.f, 1000.f };
+                ent->vtable->DieByForce(ent, force_vector_a, force_vector_b, 100, 1);
             }
         }
     }
@@ -223,20 +216,30 @@ void hacks::KillTargetInCrosshair(void) {
 
 void hacks::KillEveryone(void) {
 
+    auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz, offsets::player_xyz_offsets);
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
 
-    auto bInGame = [&entityList]() {
-        return (entityList->n_entities > 7 && entityList->n_entities < 167);
-    };
-
-    if (bInGame()) {
+    if (IsInGame()) {
         size_t n_entities = entityList->n_entities; 
+        Coords player_original_pos = { player->x, player->y, player->z };
+
         for (size_t i = 0; i < n_entities; ++i) {
             auto ent = entityList->entities[i].entity;
-            if (ent->vtable->IsVisible(ent) && (ent->vtable->GetWeapon(ent) == 0)) {
-                ent->vtable->Die(ent);
+
+            if ( /* ent->vtable->IsAwake(ent) | ent->vtable->IsVisible(ent) */ ent->vtable->GetWeapon(ent) == 0) {
+                player->x = ent->x +  5;
+                player->y = ent->y + 10;
+                player->z = ent->z +  5;
+
+                float force_vector_a[3] = { 0.f, 0.f, -1000.f };
+                float force_vector_b[3] = { 0.f, 0.f, 1000.f };
+                ent->vtable->DieByForce(ent, force_vector_a, force_vector_b, 100, 1);
             }
         }
+
+        player->x = player_original_pos.x;
+        player->y = player_original_pos.y;
+        player->z = player_original_pos.z;
     }
 
 }

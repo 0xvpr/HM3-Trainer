@@ -1,12 +1,9 @@
-#ifndef MEM_HPP
-#define MEM_HPP
+#ifndef MEM_HEADER
+#define MEM_HEADER
 
-#ifndef WIN32_LEAN_AND_MEAN
-#   define WIN32_LEAN_AND_MEAN
-#endif // WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <stdint.h>
-#include <vector>
+#include <cstdint>
+#include <array>
 
 namespace memory {
 
@@ -18,12 +15,12 @@ namespace memory {
  *
  * @return: addr
 **/
-template <typename T> [[nodiscard]]
-T FindDynamicAddress(uintptr_t ptr, const std::vector<unsigned>& offsets) {
+template <typename T, size_t size> [[nodiscard]]
+T FindDynamicAddress(uintptr_t ptr, const std::array<unsigned, size>& offsets) {
 
     auto addr = ptr;
 
-    for (const auto& offset : offsets) {
+    for (const auto offset : offsets) {
         addr = *(uintptr_t *)addr;
         addr += offset;
 
@@ -82,4 +79,4 @@ unsigned char* FindPattern(unsigned char* base_addr, size_t img_size, unsigned c
 
 }
 
-#endif // MEM_HPP
+#endif // MEM_HEADER

@@ -1,5 +1,5 @@
-#ifndef ASSEMBLY_HPP
-#define ASSEMBLY_HPP
+#ifndef ASSEMBLY_HEADER
+#define ASSEMBLY_HEADER
 
 #ifdef __cplusplus
 extern "C" {
@@ -15,4 +15,4 @@ void Multiplier(void);
 }
 #endif // __cplusplus
 
-#endif // ASSEMBLY_HPP
+#endif // ASSEMBLY_HEADER

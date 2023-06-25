@@ -1,9 +1,9 @@
-#include "Events.hpp"
+#include "events.hpp"
 
-#include "Menu.hpp"
-#include "Hacks.hpp"
-#include "Entity.hpp"
-#include "Offsets.hpp"
+#include "offsets.hpp"
+#include "entity.hpp"
+#include "hacks.hpp"
+#include "menu.hpp"
 
 enum cheats {
     infinite_ammo   = 0,
@@ -23,13 +23,10 @@ bool bCheatsEnabled = false;
 
 extern uintptr_t module_base_addr;
 
-extern HackMenu* menu;
-
 unsigned current_entity = 0;
 
 static inline
 void SetCurrentEntity(int operation) {
-
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
     if (!entityList) {
         current_entity = 0;
@@ -37,8 +34,7 @@ void SetCurrentEntity(int operation) {
     }
 
     auto bInGame = [&entityList]{
-        //auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
-        return entityList->n_entities > 1 && entityList->n_entities < 167;
+        return !entityList || (entityList->n_entities > 7 && entityList->n_entities < 167);
     }();
 
     if (!bInGame) {
@@ -64,11 +60,9 @@ void SetCurrentEntity(int operation) {
     default:
         break;
     }
-
 }
 
-bool events::HandleKeyboard(void) {
-    
+bool events::HandleKeyboard(HackMenu* menu) {
     if (GetAsyncKeyState(VK_TAB) & 1) {
         bCheatsEnabled = !bCheatsEnabled;
 
@@ -145,11 +139,13 @@ bool events::HandleKeyboard(void) {
     }
 
     if (GetAsyncKeyState(VK_HOME)) {
-        hacks::ToggleInfiniteAmmo(false);
         hacks::ToggleInfiniteHealth(false);
+        hacks::ToggleInfiniteAmmo(false);
+        hacks::ToggleNoRecoil(false);
         hacks::ToggleOneShot(false);
         hacks::ToggleStealth(false);
-        hacks::ToggleNoRecoil(false);
+        hacks::ToggleFlash(false);
+
         return true;
     }
 

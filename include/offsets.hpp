@@ -1,8 +1,8 @@
-#ifndef OFFSETS_HPP
-#define OFFSETS_HPP
+#ifndef OFFSETS_HEADER
+#define OFFSETS_HEADER
 
-#include <stdint.h>
-#include <vector>
+#include <cstdint>
+#include <array>
 
 namespace offsets {
     // Instructions
@@ -21,9 +21,9 @@ namespace offsets {
     constexpr unsigned entity                     = 0x41F83C;
 
     // Object Offsets
-    const std::vector<unsigned> cam_xyz_offsets    = { 0x8C, 0x150, 0x10, 0x14, 0x54, 0x90, 0x2C };
-    const std::vector<unsigned> player_xyz_offsets = { 0xA20, 0x4, 0x50, 0x24 };
-    const std::vector<unsigned> entity_offsets     = { 0x40 };
+    const std::array<unsigned, 7> cam_xyz_offsets    = { 0x8C, 0x150, 0x10, 0x14, 0x54, 0x90, 0x2C };
+    const std::array<unsigned, 4> player_xyz_offsets = { 0xA20, 0x4, 0x50, 0x24 };
+    const std::array<unsigned, 1> entity_offsets     = { 0x40 };
 }
 
-#endif // OFFSETS_HPP
+#endif // OFFSETS_HEADER

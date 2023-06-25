@@ -1,11 +1,10 @@
-#include "D3d9Hook.hpp"
+#include "d3d9hook.hpp"
 
 static HWND g_window;
 
 [[nodiscard]]
 BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam) {
-
-    (void)lParam;
+    UNREFERENCED_PARAMETER(lParam);
 
     DWORD wndProcId;
     GetWindowThreadProcessId(handle, &wndProcId);
@@ -20,7 +19,6 @@ BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam) {
 
 [[nodiscard]]
 HWND GetProcessWindow() {
-
     g_window = NULL;
     EnumWindows(EnumWindowsCallback, (LPARAM)nullptr);
 
@@ -49,8 +47,11 @@ bool GetD3D9Device(void** pTable, size_t Size) {
     d3dpp.hDeviceWindow = GetProcessWindow();
     d3dpp.Windowed = true;
 
-    HRESULT dummyDeviceCreated = IDirect3D9_CreateDevice(pD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dpp.hDeviceWindow, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pDummyDevice);
+    while (d3dpp.hDeviceWindow != GetForegroundWindow()) {
+        // Wait for window to be Foreground
+    }
 
+    HRESULT dummyDeviceCreated = IDirect3D9_CreateDevice(pD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dpp.hDeviceWindow, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pDummyDevice);
     if (dummyDeviceCreated != S_OK) {
         // may fail in windowed fullscreen mode, trying again with g_windowed mode
         d3dpp.Windowed = !d3dpp.Windowed;

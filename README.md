@@ -63,7 +63,7 @@ Just use your favorite payload injector and throw that bitch in there.
 It works better when the game is windowed.
 ### Build with Docker + WSL2 (Recommended)
 ```
-$ git clone https://github.com/0xvpr/HM3-Trainer.git hm3-trainer && cd hm3-trainer
+git clone https://github.com/0xvpr/HM3-Trainer.git hm3-trainer && cd hm3-trainer
 make docker-container
 make docker-build
 ```

@@ -191,6 +191,10 @@ void hacks::KillTargetInCrosshair() {
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
     auto cam = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::cam_xyz, offsets::cam_xyz_offsets);
 
+    if (!entityList || !cam) {
+        return;
+    }
+
     if (IsInGame()) {
         size_t n_entities = entityList->n_entities;
         for (size_t i = 0; i < n_entities; ++i) {
@@ -203,7 +207,6 @@ void hacks::KillTargetInCrosshair() {
             if (std::fabs(cam->x - ent->x) < 50.f && std::fabs(cam->y - ent->y) < 50.f) {
                 float force_vector_a[3] = { 0.f, 0.f, -1000.f };
                 float force_vector_b[3] = { 0.f, 0.f, 1000.f };
-                ent->vtable->setAnimation(ent, 0);
                 ent->vtable->DieByForce(ent, force_vector_a, force_vector_b, 100, 1);
             }
         }

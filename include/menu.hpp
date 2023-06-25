@@ -1,8 +1,8 @@
-#ifndef MENU_HPP
-#define MENU_HPP
+#ifndef MENU_HEADER
+#define MENU_HEADER
 
-#include <map>
 #include <string>
+#include <map>
 
 #define PADDING   50
 #define ITEM_SIZE 25
@@ -12,24 +12,22 @@ struct Item {
     std::string misc;
     bool bEnabled;
 };
+
 struct Position {
-    int x;
-    int y;
-    int width;
-    int height;
+    unsigned x;
+    unsigned y;
+    unsigned width;
+    unsigned height;
 };
+
 struct Resolution {
-    int width;
-    int height;
+    unsigned width;
+    unsigned height;
 };
 
 class HackMenu {
-
-private:
-    Position menuPosition;
-    Resolution gameResolution;
 public:
-    std::map<unsigned, Item> items = []{
+    std::map<unsigned, Item> items = []() -> std::map<unsigned, Item> {
         std::map<unsigned, Item> temp;
 
         temp[ 0] = Item{"NUM1",    "Infinite Ammo",      false };
@@ -47,7 +45,7 @@ public:
         return temp;
     }();
 public:
-    HackMenu(int x, int y) : menuPosition(Position{x, y}) {
+    HackMenu(unsigned x, unsigned y) : menuPosition(Position{x, y, 0, 0}) {
         // 0xDEADBEEF
     }
     ~HackMenu() { }
@@ -62,6 +60,9 @@ public:
     // static std::string FormatHack(Item hack);
 private:
     // unsigned GetLongestHackSize() const;
+private:
+    Position menuPosition;
+    Resolution gameResolution;
 };
 
-#endif // MENU_HPP
+#endif // MENU_HEADER

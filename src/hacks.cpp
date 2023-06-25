@@ -1,22 +1,22 @@
-#include "Hacks.hpp"
+#include "hacks.hpp"
 
-#include "Memory.hpp"
-#include "Entity.hpp"
-#include "Offsets.hpp"
-#include "Assembly.hpp"
+#include "assembly.hpp"
+#include "offsets.hpp"
+#include "entity.hpp"
+#include "memory.hpp"
 
-#include <math.h>
+#include <cmath>
 
 extern uintptr_t module_base_addr;
 
 [[nodiscard]]
-static inline bool IsInGame(void) {
+static inline bool IsInGame() {
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
-    return ( entityList->n_entities > 7 && entityList->n_entities < 167 );
+
+    return !entityList || ( entityList->n_entities > 7 && entityList->n_entities < 167 );
 }
 
 void hacks::TeleportToCam() {
-
     auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz, offsets::player_xyz_offsets);
     auto cam = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::cam_xyz, offsets::cam_xyz_offsets);
 
@@ -29,7 +29,6 @@ void hacks::TeleportToCam() {
 }
 
 void hacks::TeleportToEntity(unsigned target) {
-
     auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz, offsets::player_xyz_offsets);
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
     auto entity = entityList->entities[target].entity;
@@ -39,11 +38,9 @@ void hacks::TeleportToEntity(unsigned target) {
         player->y = entity->y + 10;
         player->z = entity->z +  5;
     }
-
 }
 
 void hacks::ToggleInfiniteAmmo(bool bEnabled) {
-
     static void* ammo_addr = (void *)(module_base_addr + offsets::ammo);
     static void* clip_counter_addr = (void *)(module_base_addr + offsets::clip_counter);
 
@@ -75,8 +72,8 @@ void hacks::ToggleInfiniteAmmo(bool bEnabled) {
     }
 
 }
-void hacks::ToggleInfiniteHealth(bool bEnabled) {
 
+void hacks::ToggleInfiniteHealth(bool bEnabled) {
     static void* health_addr = (void *)(module_base_addr + offsets::health);
 
     static unsigned char health_original[4] = {
@@ -98,7 +95,6 @@ void hacks::ToggleInfiniteHealth(bool bEnabled) {
 }
 
 void hacks::ToggleOneShot(bool bEnabled) {
-
     static void* one_shot_addr = (void *)(module_base_addr + offsets::one_shot);
 
     static unsigned char one_shot_original[10] = {
@@ -121,7 +117,6 @@ void hacks::ToggleOneShot(bool bEnabled) {
 }
 
 void hacks::ToggleStealth(bool bEnabled) {
-
     static void* stealth_addr = (void *)(module_base_addr + offsets::stealth);
 
     static unsigned char stealth_original[2] = {
@@ -141,7 +136,6 @@ void hacks::ToggleStealth(bool bEnabled) {
 }
 
 void hacks::ToggleNoRecoil(bool bEnabled) {
-
     static void* recoil_addr = (void *)(module_base_addr + offsets::recoil);
     static void* no_recoil_tramp_addr = (void *)NoRecoilTramp;
 
@@ -158,7 +152,6 @@ void hacks::ToggleNoRecoil(bool bEnabled) {
 }
 
 void hacks::ToggleFlash(bool bEnabled) {
-
     static void* mul_addr   = (void *)(module_base_addr + offsets::mul);
     static void* mul_func   = (void *)(Multiplier);
 
@@ -184,7 +177,6 @@ void hacks::ToggleFlash(bool bEnabled) {
 }
 
 void hacks::KillCurrentEntity(unsigned target) {
-
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
 
     if (IsInGame()) {
@@ -195,8 +187,7 @@ void hacks::KillCurrentEntity(unsigned target) {
     }
 }
 
-void hacks::KillTargetInCrosshair(void) {
-
+void hacks::KillTargetInCrosshair() {
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
     auto cam = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::cam_xyz, offsets::cam_xyz_offsets);
 
@@ -204,18 +195,22 @@ void hacks::KillTargetInCrosshair(void) {
         size_t n_entities = entityList->n_entities;
         for (size_t i = 0; i < n_entities; ++i) {
             auto ent = entityList->entities[i].entity;
-            if (fabs(cam->x - ent->x) < 50.f && fabs(cam->y - ent->y) < 50.f) {
+            if (!ent) 
+            {
+                continue;
+            }
+
+            if (std::fabs(cam->x - ent->x) < 50.f && std::fabs(cam->y - ent->y) < 50.f) {
                 float force_vector_a[3] = { 0.f, 0.f, -1000.f };
                 float force_vector_b[3] = { 0.f, 0.f, 1000.f };
+                ent->vtable->setAnimation(ent, 0);
                 ent->vtable->DieByForce(ent, force_vector_a, force_vector_b, 100, 1);
             }
         }
     }
-
 }
 
-void hacks::KillEveryone(void) {
-
+void hacks::KillEveryone() {
     auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz, offsets::player_xyz_offsets);
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
 
@@ -241,5 +236,4 @@ void hacks::KillEveryone(void) {
         player->y = player_original_pos.y;
         player->z = player_original_pos.z;
     }
-
 }

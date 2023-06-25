@@ -1,8 +1,17 @@
-#ifndef ENTITY_HPP
-#define ENTITY_HPP
+/**
+ * Shoutouts to the ReGlacier gang for the reversing the vtable
+ *
+ * https://github.com/ReGlacier/ReHitman
+ * https://github.com/DronCode
+ * https://github.com/AnthonyFuller
+**/
+
+#ifndef ENTITY_HEADER
+#define ENTITY_HEADER
+
+#include <cstdint>
 
 #include <windows.h>
-#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -490,4 +499,4 @@ typedef struct _Coords {
 }
 #endif // __cplusplus
 
-#endif // ENTITY_HPP
+#endif // ENTITY_HEADER

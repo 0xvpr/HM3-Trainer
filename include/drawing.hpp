@@ -1,7 +1,7 @@
-#ifndef DRAWING_HPP
-#define DRAWING_HPP
+#ifndef DRAWING_HEADER
+#define DRAWING_HEADER
 
-#include "D3d9Hook.hpp"
+#include "d3d9hook.hpp"
 
 namespace draw {
 
@@ -21,4 +21,4 @@ namespace draw {
 
 }
 
-#endif // DRAWING_HPP
+#endif // DRAWING_HEADER

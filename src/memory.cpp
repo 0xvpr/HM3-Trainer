@@ -1,8 +1,7 @@
-#include "Memory.hpp"
+#include "memory.hpp"
 
 [[nodiscard]]
 bool memory::Patch(void* dst, void* src, size_t size) {
-
     DWORD oldprotect;
 
     VirtualProtect(dst, size, PAGE_EXECUTE_WRITECOPY, &oldprotect);
@@ -22,7 +21,6 @@ bool memory::Patch(void* dst, void* src, size_t size) {
 
 [[nodiscard]]
 bool memory::Detour(void* targetFunc, void* myFunc, size_t size) {
-
     if (size < 5) {
         return false;
     }
@@ -42,12 +40,11 @@ bool memory::Detour(void* targetFunc, void* myFunc, size_t size) {
 
 [[nodiscard]]
 char* memory::TrampHook(char* src, char* dst, size_t size) {
-
     if (size < 5) {
         return 0;
     }
 
-    char* gateway = (char *)VirtualAlloc(0, size + 5, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+    char* gateway = (char *)VirtualAlloc(nullptr, size + 5, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
     memcpy(gateway, src, size);
 
     uintptr_t gateJmpAddress = (uintptr_t)(src - gateway - 5);
@@ -63,7 +60,6 @@ char* memory::TrampHook(char* src, char* dst, size_t size) {
 
 [[nodiscard]]
 static inline BOOL CompareByteArray(unsigned char* data, unsigned char* pattern, size_t pattern_size) {
-
     for (size_t i = 0; i < pattern_size; i++, pattern++, data++) {
         if (*pattern == '\0') {
             continue;
@@ -77,7 +73,6 @@ static inline BOOL CompareByteArray(unsigned char* data, unsigned char* pattern,
 
 [[nodiscard]]
 unsigned char* memory::FindPattern(unsigned char* base_addr, size_t img_size, unsigned char* pattern, size_t pattern_size) {
-
     BYTE first = pattern[0];
     PBYTE last = base_addr + img_size - pattern_size;
 

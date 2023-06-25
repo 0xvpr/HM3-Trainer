@@ -1,10 +1,12 @@
-# Hitman Blood Money Trainer
-### Timeline
-- Project started:      08/29/2021
-- Project completed:    09/01/2021
-- Project revisited:    12/29/2021
-- Project abandoned:    01/12/2022
-- Project revisited:    05/12/2022
+<h1 align="center">Hitman Blood Money Trainer</h1>
+<p align="center">
+  <img src="https://img.shields.io/badge/Windows--x86-supported-44CC11"/>
+  <a href="https://mit-license.org/"/>
+    <img src="https://img.shields.io/badge/License-MIT-44CC11"/>
+  </a>
+  <img src="https://img.shields.io/github/actions/workflow/status/0xvpr/hm3-trainer/docker_build.yml?label=Build"/>
+</p>
+<br>
   
 ## Overview:
 <img src="./resources/Hack-Menu-Screenshot.png"/>
@@ -56,10 +58,14 @@ There are currently game states that may trigger a crash if cheats are enabled.
 These game states include:
 - Restarting a mission with cheats enabled (sometimes)
 
-### Build Instructions
-- WSL (Preferred)
+### Usage
+Just use your favorite payload injector and throw that bitch in there.  
+It works better when the game is windowed.
+### Build with Docker + WSL2 (Recommended)
 ```
-$ make
+$ git clone https://github.com/0xvpr/HM3-Trainer.git hm3-trainer && cd hm3-trainer
+make docker-container
+make docker-build
 ```
 - Windows
 ```powershell

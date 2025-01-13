@@ -15,7 +15,7 @@ namespace hacks {
     void ToggleFlash(bool bEnabled);
     void KillCurrentEntity(unsigned target);
     void KillTargetInCrosshair(void);
-    void KillEveryone(void);
+    void DisarmEveryone(void);
 }
 
 #endif /* _HACKS_H */

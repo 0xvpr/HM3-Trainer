@@ -6,7 +6,7 @@
 #include <windows.h>
 
 namespace events {
-    bool HandleKeyboard(HackMenu *);
+    bool HandleKeyboard(HackMenu&);
 }
 
 #endif // EVENTS_HEADER

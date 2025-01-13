@@ -1,11 +1,7 @@
 #include "d3d9hook.hpp"
 
-static HWND g_window;
-
 [[nodiscard]]
 BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam) {
-    UNREFERENCED_PARAMETER(lParam);
-
     DWORD wndProcId;
     GetWindowThreadProcessId(handle, &wndProcId);
 
@@ -13,16 +9,16 @@ BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam) {
         return TRUE; // skip to next g_window
     }
 
-    g_window = handle;
-    return FALSE; // g_window found abort search
+    *(HWND *)lParam = handle;
+    return false; // g_window found abort search
 }
 
 [[nodiscard]]
 HWND GetProcessWindow() {
-    g_window = NULL;
-    EnumWindows(EnumWindowsCallback, (LPARAM)nullptr);
+    HWND window = nullptr;
+    EnumWindows(EnumWindowsCallback, (LPARAM)&window);
 
-    return g_window;
+    return window;
 }
 
 [[nodiscard]]
@@ -37,7 +33,7 @@ bool GetD3D9Device(void** pTable, size_t Size) {
         return false;
     }
 
-    IDirect3DDevice9* pDummyDevice = NULL;
+    IDirect3DDevice9* pDummyDevice = nullptr;
 
     // options to create dummy device
     D3DPRESENT_PARAMETERS d3dpp;

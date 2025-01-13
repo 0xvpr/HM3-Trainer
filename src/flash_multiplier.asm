@@ -1,7 +1,7 @@
-segment .text
-global _Multiplier
+segment     .text
+global      _mul
 
-_Multiplier:
+_mul:
     push    dword [rel speed]
     pop     dword [esi + 0x14]
     jmp     dword [rel return]

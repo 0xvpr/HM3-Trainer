@@ -5,9 +5,9 @@
 #include "menu.hpp"
 
 namespace render {
-    HackMenu* InitializeMenu(LPDIRECT3DDEVICE9 pDevice);
+    void InitializeMenu(LPDIRECT3DDEVICE9 pDevice);
     void CreateFont(LPDIRECT3DDEVICE9 pDevice, int size);
-    void Menu(LPDIRECT3DDEVICE9 d3dDevice);
+    void Menu(LPDIRECT3DDEVICE9 d3dDevice, HackMenu* menu);
 }
 
 #endif // RENDER_HEADER

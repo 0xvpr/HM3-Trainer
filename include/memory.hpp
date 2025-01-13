@@ -2,6 +2,7 @@
 #define MEM_HEADER
 
 #include <windows.h>
+
 #include <cstdint>
 #include <array>
 
@@ -15,8 +16,8 @@ namespace memory {
  *
  * @return: addr
 **/
-template <typename T, size_t size> [[nodiscard]]
-T FindDynamicAddress(uintptr_t ptr, const std::array<unsigned, size>& offsets) {
+template <typename T, typename array_t, size_t size> [[nodiscard]]
+T FindDynamicAddress(uintptr_t ptr, const std::array<array_t, size>& offsets) {
 
     auto addr = ptr;
 
@@ -36,12 +37,58 @@ T FindDynamicAddress(uintptr_t ptr, const std::array<unsigned, size>& offsets) {
  * Byte replacement from source to destination.
  *
  * @param:  char* destination
- * @param:  char* source
+ * @param:  T* source
  * @param:  size_t size
  *
  * @return: void
 **/
-bool Patch(void* dst, void* src, size_t size);
+template <typename T, std::size_t size>
+bool Patch(void* dst, const std::array<T, size>& src) {
+    DWORD oldprotect;
+
+    VirtualProtect(dst, size, PAGE_EXECUTE_WRITECOPY, &oldprotect);
+    memcpy(dst, src.data(), size); 
+    VirtualProtect(dst, size, oldprotect, &oldprotect);
+
+    unsigned char* destination = (unsigned char *)dst;
+    unsigned char* source = (unsigned char *)src.data();
+    for (size_t i = 0; i < size; i++, destination++, source++) {
+        if (*destination != *source ) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Byte replacement from source to destination.
+ *
+ * @param:  char* destination
+ * @param:  T* source
+ * @param:  size_t size
+ *
+ * @return: void
+**/
+template <typename T>
+bool Patch(void* dst, T* src, size_t size) {
+    DWORD oldprotect;
+
+    VirtualProtect(dst, size, PAGE_EXECUTE_WRITECOPY, &oldprotect);
+    memcpy(dst, src, size); 
+    VirtualProtect(dst, size, oldprotect, &oldprotect);
+
+    unsigned char* destination = (unsigned char *)dst;
+    unsigned char* source = (unsigned char *)src;
+    for (size_t i = 0; i < size; i++, destination++, source++) {
+        if (*destination != *source ) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 
 /**
  * Hooks into a function and detours the target function to another function.
@@ -55,6 +102,17 @@ bool Patch(void* dst, void* src, size_t size);
 bool Detour(void* targetFunc, void* myFunc, size_t size);
 
 /**
+ * Hooks into a function and detours the target function to another function.
+ *
+ * @param:  void* targetFunc
+ * @param:  void(* myFuncPtr)(void)
+ * @param:  size_t size
+ *
+ * @return: bool
+**/
+bool Detour(void* targetFunc, void (* myFuncPtr)(void), size_t size);
+
+/**
  * Hooks into a function and detours the target function to another function, then jumps back.
  *
  * @param:  char* src
@@ -63,6 +121,7 @@ bool Detour(void* targetFunc, void* myFunc, size_t size);
  *
  * @return: char*
 **/
+[[nodiscard]]
 char* TrampHook(char* targetFunc, char* myFunc, size_t size);
 
 /**
@@ -75,8 +134,9 @@ char* TrampHook(char* targetFunc, char* myFunc, size_t size);
  *
  * @return: Pointer of the pattern found, 0 otherwise.
 **/
+[[nodiscard]]
 unsigned char* FindPattern(unsigned char* base_addr, size_t img_size, unsigned char* pattern, size_t s);
 
-}
+} // namespace memory
 
 #endif // MEM_HEADER

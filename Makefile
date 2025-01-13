@@ -2,7 +2,8 @@ PROJECT         = shitman3
 
 CC              = i686-w64-mingw32-g++
 CFLAGS          = -std=c++2a -Wall -Wextra -Werror -Wshadow -Wpedantic -Wconversion\
-                  -Wno-missing-field-initializers -Wno-attributes
+                  -Wno-missing-field-initializers -Wno-attributes -Wno-cast-function-type -Wno-unused-but-set-parameter\
+                  -fno-rtti -fno-exceptions
 
 LD              = i686-w64-mingw32-g++
 LDFLAGS         = -static -shared -ld3d9 -ld3dx9
@@ -30,14 +31,14 @@ MAKEFLAGS      += -j$(shell nproc)
 ### COMMENT IF YOU USE A TOASTER ###
 
 all: $(LIB) $(BUILD) $(PROJECT)
-$(PROJECT): debug release
+$(PROJECT): release
 
 debug:   CFLAGS  += -O2 -g
 release: CFLAGS  += -march=native -Ofast -fPIE -funsafe-math-optimizations -fomit-frame-pointer
 release: CFLAGS  += -funroll-loops -funsafe-loop-optimizations -funswitch-loops -floop-parallelize-all
 release: CFLAGS  += -finline-functions -falign-functions -falign-loops -falign-jumps -fno-function-sections
 release: CFLAGS  += -fno-ident -fvisibility=hidden -fstrict-aliasing
-release: CFLAGS  += -D_WIN32 -DVC_EXTRALEAN
+release: CFLAGS  += -DWIN32_LEAN_AND_MEAN -DVC_EXTRALEAN
 release: LDFLAGS += -s
 
 debug: $(ASM_OBJECTS) $(DEBUG_OBJECTS)

@@ -3,6 +3,9 @@
 #include "drawing.hpp"
 #include "menu.hpp"
 
+#include <string>
+#include <cstdio>
+
 extern unsigned int current_entity;
 
 extern bool bMaximizeMenu;
@@ -11,29 +14,23 @@ extern bool bCheatsEnabled;
 extern LPD3DXFONT m_font;
 extern LPD3DXFONT m_font_small;
 
-HackMenu* menu;
-
-HackMenu* render::InitializeMenu(LPDIRECT3DDEVICE9 pDevice) {
+void render::InitializeMenu(LPDIRECT3DDEVICE9 pDevice) {
     D3DDISPLAYMODE  d3dDisplayMode;
     IDirect3DDevice9_GetDisplayMode(pDevice, 0, &d3dDisplayMode);
-
-    menu = new HackMenu(30, 120);
-
-    return menu;
 }
 
-void render::Menu(LPDIRECT3DDEVICE9 d3dDevice) {
+void render::Menu(LPDIRECT3DDEVICE9 d3dDevice, HackMenu* menu) {
     D3DDISPLAYMODE  d3dDisplayMode;
     float           factor;
-    char            buffer[32];
+    char            entity_buffer[32];
 
     // Get Resolution
     IDirect3DDevice9_GetDisplayMode(d3dDevice, 0, &d3dDisplayMode);
 
     // Draw Height
-    memset(buffer, 0, sizeof(buffer));
-    snprintf(buffer, sizeof(buffer), "Current Entity: %u", current_entity);
-    draw::DrawTextA(buffer, static_cast<int>(menu->X()), static_cast<int>(menu->Y() - 25), 200, 20, draw::color::LightGrey, m_font);
+    memset(entity_buffer, 0, sizeof(entity_buffer));
+    snprintf(entity_buffer, sizeof(entity_buffer), "Current Entity: %u", current_entity);
+    draw::DrawTextA(entity_buffer, static_cast<int>(menu->X()), static_cast<int>(menu->Y() - 25), 200, 20, draw::color::LightGrey, m_font);
 
     if (bMaximizeMenu) {
         factor = 1.0;
@@ -51,8 +48,10 @@ void render::Menu(LPDIRECT3DDEVICE9 d3dDevice) {
 
         // Draw Cheats
         int i = 1;
-        for (const auto& [key, value] : menu->items) {
-            draw::DrawTextA((value.hotkey + ": " + value.misc).c_str(), menu->X() + 12, menu->Y() + 12 + (i * 25), 200, 20, (value.bEnabled ? draw::color::Green : draw::color::LightGrey), m_font);
+        for (const auto& [bEnabled, hotkey, name] : menu->items) {
+            char cheat_buffer[128]{ 0 };
+            snprintf(cheat_buffer, sizeof(cheat_buffer), "%s: %s", hotkey, name);
+            draw::DrawTextA(cheat_buffer, menu->X() + 12, menu->Y() + 12 + (i * 25), 200, 20, (bEnabled ? draw::color::Green : draw::color::LightGrey), m_font);
             ++i;
         }
 

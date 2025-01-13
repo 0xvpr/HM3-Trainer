@@ -14,14 +14,14 @@
 #include "memory.hpp"
 #include "menu.hpp"
 
-HackMenu* g_menu;
-
-uintptr_t module_base_addr = 0;
-HWND dll_handle = nullptr;
-
-LPVOID d3d9Device[119];
+typedef HRESULT(APIENTRY* tEndScene)(LPDIRECT3DDEVICE9 pDevice);
 tEndScene oEndScene = nullptr;
-unsigned char oEndScene_bytes[7] = { 0 };
+
+HackMenu* g_menu;
+uintptr_t module_base_addr = 0;
+
+void* d3d9Device[119] = { 0 };
+uint8_t oEndScene_bytes[7] = { 0 };
 
 bool bMaximizeMenu = true;
 bool bShutdown = false;
@@ -31,10 +31,12 @@ HRESULT APIENTRY hkEndScene(LPDIRECT3DDEVICE9 pDevice) {
     if (bInit == false) {
         bInit = true;
 
-        g_menu = render::InitializeMenu(pDevice);
+        g_menu = new HackMenu(Position{ 30, 120, 0, 0 });
+
+        render::InitializeMenu(pDevice);
         render::CreateFont(pDevice, 20);
     }
-    render::Menu(pDevice);
+    render::Menu(pDevice, g_menu);
 
     return oEndScene(pDevice);
 }
@@ -47,7 +49,7 @@ DWORD WINAPI MainThread(LPVOID lpReserved) {
         oEndScene = (tEndScene)memory::TrampHook((char *)d3d9Device[42], (char *)hkEndScene, sizeof(oEndScene_bytes));
     }
 
-    while (!(bShutdown = events::HandleKeyboard(g_menu))) {
+    while (!(bShutdown = events::HandleKeyboard(*g_menu))) {
         // Main Loop
     }
     delete g_menu;
@@ -59,12 +61,11 @@ DWORD WINAPI MainThread(LPVOID lpReserved) {
     return TRUE;
 }
 
-BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved) {
+extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved) {
     UNREFERENCED_PARAMETER(lpReserved);
 
     switch (dwReason) {
         case DLL_PROCESS_ATTACH: {
-            dll_handle = (HWND)hInstance;
             DisableThreadLibraryCalls(hInstance);
             CreateThread(0, 0, MainThread, hInstance, 0, 0);
             break;

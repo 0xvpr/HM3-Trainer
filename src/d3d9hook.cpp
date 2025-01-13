@@ -2,21 +2,22 @@
 
 [[nodiscard]]
 BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam) {
-    DWORD wndProcId;
+    DWORD wndProcId = 0;
     GetWindowThreadProcessId(handle, &wndProcId);
 
     if (GetCurrentProcessId() != wndProcId) {
-        return TRUE; // skip to next g_window
+        return TRUE; // skip to next window
     }
 
     *(HWND *)lParam = handle;
-    return false; // g_window found abort search
+    return false; // window found abort search
 }
 
 [[nodiscard]]
 HWND GetProcessWindow() {
     HWND window = nullptr;
     EnumWindows(EnumWindowsCallback, (LPARAM)&window);
+    window && SetForegroundWindow(window);
 
     return window;
 }
@@ -49,7 +50,7 @@ bool GetD3D9Device(void** pTable, size_t Size) {
 
     HRESULT dummyDeviceCreated = IDirect3D9_CreateDevice(pD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dpp.hDeviceWindow, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pDummyDevice);
     if (dummyDeviceCreated != S_OK) {
-        // may fail in windowed fullscreen mode, trying again with g_windowed mode
+        // may fail in windowed fullscreen mode, trying again with windowed mode
         d3dpp.Windowed = !d3dpp.Windowed;
         dummyDeviceCreated = IDirect3D9_CreateDevice(pD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dpp.hDeviceWindow, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pDummyDevice);
 

@@ -23,16 +23,18 @@ struct resolution {
 };
 
 class toggleable {
+private:
     [[nodiscard]] virtual bool is_active() const = 0;
     [[nodiscard]] virtual bool toggle()    const = 0;
+public:
+    mutable std::atomic<bool> is_active_ = false;
 };
 
 class Item : private toggleable {
 public:
     Item() = delete;
     Item(const std::string_view hotkey, const std::string_view text)
-    : is_active_ ( false   )
-    , hotkey_    ( hotkey )
+    : hotkey_    ( hotkey )
     , text_      ( text   )
     , repr_      { '(', 'n', 'u', 'l', 'l', ')', 0 }
     {
@@ -46,7 +48,6 @@ public:
             repr_[sizeof(repr_)-1] = 0;
         }
     }
-
     virtual ~Item() {}
 
     const char* c_str_repr() const {
@@ -64,7 +65,6 @@ public:
 
 
 private:
-    mutable std::atomic<bool> is_active_;
     const std::string_view    hotkey_;
     const std::string_view    text_;
     char                      repr_[64];
@@ -101,7 +101,7 @@ public:
     [[nodiscard]] constexpr inline int  menu_height()       const { return c_padding + (c_item_height * (sizeof(items_)/sizeof(Item)) ); }
     [[nodiscard]] constexpr inline int  game_width()        const { return resolution_.height; }
     [[nodiscard]] constexpr inline int  game_height()       const { return resolution_.width; }
-    [[nodiscard]] inline bool is_maximized()                const { return maximized_.load(); }
+    [[nodiscard]]           inline bool is_maximized()      const { return maximized_.load(); }
 
     [[nodiscard]] virtual bool is_active() const {
         return is_active_.load( std::memory_order_acquire );
@@ -115,7 +115,6 @@ public:
     hack_menu(position&& position)
     : position_    ( position )
     , maximized_   ( true )
-    , is_active_   ( false )
     {
         // 0xDEADBEEF
     }
@@ -141,7 +140,6 @@ private:
     resolution                       resolution_;
 
     mutable std::atomic<bool>        maximized_;
-    mutable std::atomic<bool>        is_active_;
 };
 
 #endif // MENU_HEADER

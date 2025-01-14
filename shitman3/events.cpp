@@ -66,23 +66,29 @@ bool events::handle_keyboard(hack_menu& menu) {
         return false;
     }
 
-    if (menu.is_active() && GetAsyncKeyState(VK_NUMPAD1) & 1) {
-        hacks::toggle_infinite_ammo( menu[cheats::infinite_ammo].toggle() );
+    if (GetAsyncKeyState(VK_NUMPAD1) & 1) {
+        bool active = menu[cheats::infinite_ammo].toggle();
+        if (menu.is_active()) { hacks::toggle_infinite_ammo( active ); }
     }
-    if (menu.is_active() && GetAsyncKeyState(VK_NUMPAD2) & 1) {
-        hacks::toggle_infinite_health( menu[cheats::infinite_health].toggle() );
+    if (GetAsyncKeyState(VK_NUMPAD2) & 1) {
+        bool active = menu[cheats::infinite_health].toggle();
+        if (menu.is_active()) { hacks::toggle_infinite_health( active ); }
     }
-    if (menu.is_active() && GetAsyncKeyState(VK_NUMPAD3) & 1) {
-        hacks::toggle_one_shot( menu[cheats::one_shot_kill].toggle() );
+    if (GetAsyncKeyState(VK_NUMPAD3) & 1) {
+        bool active = menu[cheats::one_shot_kill].toggle();
+        if (menu.is_active()) { hacks::toggle_one_shot( active ); }
     }
-    if (menu.is_active() && GetAsyncKeyState(VK_NUMPAD4) & 1) {
-        hacks::toggle_stealth( menu[cheats::no_reactions].toggle() );
+    if (GetAsyncKeyState(VK_NUMPAD4) & 1) {
+        bool active = menu[cheats::no_reactions].toggle();
+        if (menu.is_active()) { hacks::toggle_stealth( active ); }
     }
-    if (menu.is_active() && GetAsyncKeyState(VK_NUMPAD5) & 1) {
-        hacks::toggle_no_recoil( menu[cheats::no_recoil].toggle() );
+    if (GetAsyncKeyState(VK_NUMPAD5) & 1) {
+        bool active = menu[cheats::no_recoil].toggle();
+        if (menu.is_active()) { hacks::toggle_no_recoil( active ); }
     }
-    if (menu.is_active() && GetAsyncKeyState(VK_NUMPAD6) & 1) {
-        hacks::toggle_flash( menu[cheats::flash].toggle() );
+    if (GetAsyncKeyState(VK_NUMPAD6) & 1) {
+        bool active = menu[cheats::flash].toggle();
+        if (menu.is_active()) { hacks::toggle_flash( active ); }
     }
 
 //  // broken

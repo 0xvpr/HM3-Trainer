@@ -11,8 +11,6 @@
 
 #include <cstdint>
 
-#include <windows.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
@@ -270,27 +268,27 @@ typedef struct _Vtable {
     void    (__thiscall * Function_0249)(void *); //#249 +3e4 .rdata:00796718
     void    (__thiscall * Function_0250)(void *); //#250 +3e8 .rdata:0079671c
     void    (__thiscall * Function_0251)(void *); //#251 +3ec .rdata:00796720
-    void    (__thiscall * Function_0252)(void *); //#252 +3f0 .rdata:00796724
-    void    (__thiscall * Function_0253)(void *); //#253 +3f4 .rdata:00796728
-    void    (__thiscall * Function_0254)(void *); //#254 +3f8 .rdata:0079672c
-    void    (__thiscall * Function_0255)(void *); //#255 +3fc .rdata:00796730
-    void    (__thiscall * Function_0256)(void *); //#256 +400 .rdata:00796734
-    void    (__thiscall * Function_0257)(void *); //#257 +404 .rdata:00796738
-    void    (__thiscall * Function_0258)(void *); //#258 +408 .rdata:0079673c
-    void    (__thiscall * Function_0259)(void *); //#259 +40c .rdata:00796740
-    void    (__thiscall * Function_0260)(void *, int, int); // (UnknownEnum1 _a0, int _itemID); //#260 +410 .rdata:00796744
-    char*   (__thiscall * Function_0261)(void *); //#261 +414 .rdata:00796748
-    void    (__thiscall * Function_0262)(void *); //#262 +418 .rdata:0079674c
-    void    (__thiscall * Function_0263)(void *); //#263 +41c .rdata:00796750
-    void    (__thiscall * Function_0264)(void *); //#264 +420 .rdata:00796754
-    void    (__thiscall * Function_0265)(void *); //#265 +424 .rdata:00796758
-    void    (__thiscall * Function_0266)(void *); //#266 +428 .rdata:0079675c
-    void    (__thiscall * Function_0267)(void *); //#267 +42c .rdata:00796760
-    void    (__thiscall * Function_0268)(void *); //#268 +430 .rdata:00796764
-    void    (__thiscall * Function_0269)(void *); //#269 +434 .rdata:00796768
-    void    (__thiscall * Function_0270)(void *); //#270 +438 .rdata:0079676c
-    void    (__thiscall * Function_0271)(void *); //#271 +43c .rdata:00796770
-    void    (__thiscall * Function_0272)(void *); //#272 +440 .rdata:00796774
+    void    (__thiscall * Function_0252)(void *); //#251 +3ec .rdata:00796720
+    void    (__thiscall * AddNearItem)(void *, void* ZREF);
+    void    (__thiscall * RemoveNearItem)(void *, void* ZREF);
+    void    (__thiscall * OnBoidPushing)(void *, void* ZLNKWHANDS);
+    void    (__thiscall * OnBoidPushed)(void *, void* ZLNKWHANDS);
+    void    (__thiscall * CheckRHandFireTarget)(void *);
+    void    (__thiscall * GetRHandFireTarget)(void *);
+    void    (__thiscall * SetAimInPosition)(void *, bool);
+    void    (__thiscall * AddAction)(void *, int EWHandsActionType, void* ZREF);
+    const char* (__thiscall * GetAnimNameFromCollision)(void *, void* SIKBoneCollision, bool, void* ZItemTemplateWeapon);
+    void    (__thiscall * ReloadItem)(void *, void* ZItem);
+    void    (__thiscall * LetItemFall)(void *, void* ZItem);
+    void    (__thiscall * ShowReloadAnim)(void *, void* ZItemWeapon);
+    void    (__thiscall * ShowChamberAnim)(void *, void* ZItemWeapon);
+    void    (__thiscall * ControlPickup)(void *, void* ZItem);
+    void    (__thiscall * ControlUseOneExtra)(void *, void* ZREF);
+    void    (__thiscall * ControlUseOneAlone)(void *, void* ZREF);
+    void    (__thiscall * ControlUseTwo)(void *, void* ZREF, void* ZREF2);
+    void    (__thiscall * ControlDrop)(void *, void* ZItem);
+    void*   (__thiscall * GetPickupAction)(void *, int*, int*, int*, int, int, int, bool); //unused
+    void    (__thiscall * ModifyPickupAction)(void *, int*, int*, int*, void* ZItemTemplate); //unused
     int     (__thiscall * OnlyVerticalAim)(void *); //#273 +444 .rdata:00796778 { always false }
     void    (__thiscall * GetAimAnim)(void *, void **, int*); //(Glacier::Animation::Header** results, uint32_t& count); //#274 +448 .rdata:0079677c
     void    (__thiscall * GetPoseEffects)(void *, float*, unsigned short*); //(float* ,unsigned short*); //#275 +44c .rdata:00796780 { BAD ASSEMBLY! }
@@ -356,26 +354,26 @@ typedef struct _Vtable {
     void    (__thiscall * PlayFootStep)(void *, int e_foot_side); //#335 +53c .rdata:00796870
     int     (__thiscall * IsFirstPersonCamera)(void *); //#336 +540 .rdata:00796874
     float   (__thiscall * GetCombatStrength)(void *); //#337 +544 .rdata:00796878
-    void    (__thiscall * SetActorRootTM)(void *, const void* vec3_a, const void* vec3_b); //#338 +548 .rdata:0079687c
-    void    (__thiscall * SetActorPosDir)(void *,const void* vec3_a, const void* vec3_b); //#339 +54c .rdata:00796880
+    void    (__thiscall * SetActorRootTM)(void *, const float* vec3_a, const float* vec3_b); //#338 +548 .rdata:0079687c
+    void    (__thiscall * SetActorPosDir)(void *,const float* vec3_a, const float* vec3_b); //#339 +54c .rdata:00796880
     void*   (__thiscall * GetActorRootTM)(void *, const float*, const float*); //#340 +550 .rdata:00796884
-    void    (__thiscall * GetActorWorldPosition)(void *, void* vec3); //#341 +554 .rdata:00796888 {possible setPosition!!!}
-    void    (__thiscall * SetActorWorldPosition)(void *, void* vec3); //#342 +558 .rdata:0079688c
+    void    (__thiscall * GetActorWorldPosition)(void *, float const* vec3); //#341 +554 .rdata:00796888 {possible setPosition!!!}
+    void    (__thiscall * SetActorWorldPosition)(void *, float const* vec3); //#342 +558 .rdata:0079688c
     int     (__thiscall * CanPlayAnimSegment)(void *, void* header, float, float, const float*, const float*, int , float, float); //#343 +55c .rdata:00796890
     int     (__thiscall * IsUnconscious)(void *); //#344 +560 .rdata:00796894
     int     (__thiscall * IsAwake)(void *); //#345 +564 .rdata:00796898 {possible isAlive}
     int     (__thiscall * IsSleeping)(void *); //#346 +568 .rdata:0079689c
-    void    (__thiscall * SetHero)(void *, uint8_t); //#347 +56c .rdata:007968a0
+    void    (__thiscall * SetHero)(void *, uint32_t); //#347 +56c .rdata:007968a0
     int     (__thiscall * SetActorState)(void *, int status); //#348 +570 .rdata:007968a4
     void    (__thiscall * OnViewEnter)(void *); //#349 +574 .rdata:007968a8
     void    (__thiscall * OnViewLeave)(void *); //#350 +578 .rdata:007968ac
     void*   (__thiscall * GetPathFinder4)(void *); //#351 +57c .rdata:007968b0 (return ZEngineDataBase + 0x14)
-    int     (__thiscall * EnablePathFinder)(void *, int  _a0); //#352 +580 .rdata:007968b4
+    int     (__thiscall * EnablePathFinder)(void *, bool  _a0); //#352 +580 .rdata:007968b4
     void    (__thiscall * SetStopDistance)(void *, float); //#353 +584 .rdata:007968b8
     void    (__thiscall * SetEndDir)(void *, void* vec3); //#354 +588 .rdata:007968bc (it works with coordinates but not world coordinates [-1.0; 1.0])
     void*   (__thiscall * GetEndDir)(void *); //#355 +58c .rdata:007968c0
-    void    (__thiscall * MoveToPosition)(void *, const void* vec3_a, const void* vec3_b); //#356 +590 .rdata:007968c4
-    void    (__thiscall * SlideToPosition)(void *, const void* vec3_a, const void* vec3_b); //#357 +594 .rdata:007968c8
+    void    (__thiscall * MoveToPosition)(void *, const float* vec3_a, const float* vec3_b); //#356 +590 .rdata:007968c4
+    void    (__thiscall * SlideToPosition)(void *, const float* vec3_a, const float* vec3_b); //#357 +594 .rdata:007968c8
     void    (__thiscall * SetPathNotify)(void *, float); //#358 +598 .rdata:007968cc
     void    (__thiscall * SetPathNotifySyncToCycle)(void *, int arg); //#359 +59c .rdata:007968d0
     void    (__thiscall * SetEndAction)(void *, int arg); //#360 +5a0 .rdata:007968d4
@@ -403,8 +401,8 @@ typedef struct _Vtable {
     int     (__thiscall * Resurrect)(void *); //#382 +5f8 .rdata:0079692c
     int     (__thiscall * Knockout)(void *); //#383 +5fc .rdata:00796930 (possible not but actor not dies here)
     int     (__thiscall * Revive)(void *); //#384 +600 .rdata:00796934 {possible sedate or smth l ths}
-    int     (__thiscall * GetKnockedOut)(void *); //#385 +604 .rdata:00796938
-    int     (__thiscall * GetActorList)(void *); //#386 +608 .rdata:0079693c
+    void*   (__thiscall * GetKnockedOut)(void *); //#385 +604 .rdata:00796938
+    void*   (__thiscall * GetActorList)(void *); //#386 +608 .rdata:0079693c
     void    (__thiscall * SetDisableIdleAnimation)(void *, int); //#387 +60c .rdata:00796940
     int     (__thiscall * GetAudibleRoomList)(void *); //#388 +610 .rdata:00796944
     void    (__thiscall * LookAt)(void *, int _a0); //#389 +614 .rdata:00796948
@@ -421,13 +419,13 @@ typedef struct _Vtable {
     void    (__thiscall * UpdatePosition)(void *); //#400 +640 .rdata:00796974
     int     (__thiscall * GetCurrentUBAnim)(void *, void* zitem_a, void* zitem_b, int*); //#401 +644 .rdata:00796978
     void*   (__thiscall * SetHoldWeaponUBAnim)(void *, void* anim); //#402 +648 .rdata:0079697c
-    void    (__thiscall * GetAnimOffset)(void *, const char*); //#403 +64c .rdata:00796980
+    void    (__thiscall * GetAnimOffset)(void *, bool const*); //#403 +64c .rdata:00796980
     void    (__thiscall * GetAnimOffset2)(void *, void* header); //#404 +650 .rdata:00796984
     void*   (__thiscall * GetAnimHeader)(void *, uint32_t); //#405 +654 .rdata:00796988
-    void    (__thiscall * Function_0406)(void *); //#406 +658 .rdata:0079698c
-    void    (__thiscall * Function_0407)(void *); //#407 +65c .rdata:00796990
-    void    (__thiscall * Function_0408)(void *); //#408 +660 .rdata:00796994
-    void    (__thiscall * Function_0409)(void *); //#409 +664 .rdata:00796998
+    void    (__thiscall * ShootIntoGroundCallback)(void *, void *); //#406 +658 .rdata:0079698c
+    void    (__thiscall * ActivateAnimSegmentWithCameraBone)(void *, void *, int, float, float); //#407 +65c .rdata:00796990
+    void    (__thiscall * PlaySpeechResource)(void *, uint32_t, int); //#408 +660 .rdata:00796994
+    void    (__thiscall * PlaySpeechResourceWithFilter)(void *, uint32_t, float, float, float); //#409 +664 .rdata:00796998
     int     (__thiscall * SetWeapon)(void *, int itemID); //#410 +668 .rdata:0079699c, possible giveItem method
     int     (__thiscall * GetWeapon)(void *); //#411 +66c .rdata:007969a0
     void    (__thiscall * SetWeaponTemplate)(void *, uint32_t); //#412 +670 .rdata:007969a4
@@ -441,7 +439,7 @@ typedef struct _Vtable {
     void    (__thiscall * ActivateRagdollNextFrame)(void *); //#420 +690 .rdata:007969c4
     void    (__thiscall * InitializeHitpoints)(void *, float); //#421 +694 .rdata:007969c8
     void    (__thiscall * SetHitpoints)(void *, float); //#422 +698 .rdata:007969cc
-    int     (__thiscall * GetHitpoints)(void *); //#423 +69c .rdata:007969d0
+    float   (__thiscall * GetHitpoints)(void *); //#423 +69c .rdata:007969d0
     void    (__thiscall * TakeDamage)(void *, float); //#424 +6a0 .rdata:007969d4
     float   (__thiscall * GetHealth)(void *); //#425 +6a4 .rdata:007969d8
     float   (__thiscall * GetWeaponStrength)(void *); //#426 +6a8 .rdata:007969dc

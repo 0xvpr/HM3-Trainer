@@ -3,10 +3,8 @@
 
 #include "menu.hpp"
 
-#include <windows.h>
-
 namespace events {
-    bool HandleKeyboard(HackMenu *);
+    bool handle_keyboard(hack_menu& menu);
 }
 
 #endif // EVENTS_HEADER

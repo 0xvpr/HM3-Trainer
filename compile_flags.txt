@@ -1,10 +1,8 @@
--std=c++2a
---target=i686-pc-windows-gnu
--isystem/usr/i686-w64-mingw32/include
--isystem/usr/lib/gcc/i686-w64-mingw32/10-win32/include
--isystem/usr/lib/gcc/i686-w64-mingw32/10-win32/include/c++
--isystem/usr/lib/gcc/i686-w64-mingw32/10-win32/include/c++/i686-w64-mingw32/
--Iinclude
+--target=x86_64-pc-windows-gnu
+-std=c++2b
+-isystem/usr/lib/gcc/x86_64-w64-mingw32/10-win32/include/c++
+-isystem/usr/lib/gcc/x86_64-w64-mingw32/10-win32/include/c++/x86_64-w64-mingw32/
+-Ishitman3
 -Wall
 -Wextra
 -Werror

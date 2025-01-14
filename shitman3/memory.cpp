@@ -1,25 +1,5 @@
 #include "memory.hpp"
 
-[[nodiscard]]
-bool memory::Patch(void* dst, void* src, size_t size) {
-    DWORD oldprotect;
-
-    VirtualProtect(dst, size, PAGE_EXECUTE_WRITECOPY, &oldprotect);
-    memcpy(dst, src, size); 
-    VirtualProtect(dst, size, oldprotect, &oldprotect);
-
-    unsigned char* destination = (unsigned char *)dst;
-    unsigned char* source = (unsigned char *)src;
-    for (size_t i = 0; i < size; i++, destination++, source++) {
-        if (*destination != *source ) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-[[nodiscard]]
 bool memory::Detour(void* targetFunc, void* myFunc, size_t size) {
     if (size < 5) {
         return false;
@@ -38,7 +18,24 @@ bool memory::Detour(void* targetFunc, void* myFunc, size_t size) {
     return true;
 }
 
-[[nodiscard]]
+bool memory::Detour(void* targetFunc, void(* myFuncPtr)(void), size_t size) {
+    if (size < 5) {
+        return false;
+    }
+
+    DWORD dwProtect;
+    VirtualProtect(targetFunc, size, PAGE_EXECUTE_READWRITE, &dwProtect);
+
+    memset(targetFunc, 0x90, size); // memset nop
+    uintptr_t relative_addr = ((uintptr_t)myFuncPtr - (uintptr_t)targetFunc) - 5;
+
+    *(unsigned char *)targetFunc = 0xE9; // replace with jmp
+    *(uintptr_t *)((uintptr_t)targetFunc + 1) = relative_addr;
+    VirtualProtect(targetFunc, size, dwProtect, &dwProtect);
+
+    return true;
+}
+
 char* memory::TrampHook(char* src, char* dst, size_t size) {
     if (size < 5) {
         return 0;
@@ -58,7 +55,6 @@ char* memory::TrampHook(char* src, char* dst, size_t size) {
     }
 }
 
-[[nodiscard]]
 static inline BOOL CompareByteArray(unsigned char* data, unsigned char* pattern, size_t pattern_size) {
     for (size_t i = 0; i < pattern_size; i++, pattern++, data++) {
         if (*pattern == '\0') {
@@ -71,7 +67,6 @@ static inline BOOL CompareByteArray(unsigned char* data, unsigned char* pattern,
     return true;
 }
 
-[[nodiscard]]
 unsigned char* memory::FindPattern(unsigned char* base_addr, size_t img_size, unsigned char* pattern, size_t pattern_size) {
     BYTE first = pattern[0];
     PBYTE last = base_addr + img_size - pattern_size;

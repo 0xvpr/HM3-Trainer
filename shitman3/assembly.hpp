@@ -1,18 +1,22 @@
 #ifndef ASSEMBLY_HEADER
 #define ASSEMBLY_HEADER
 
+namespace assembly {
+
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
 
-void NoRecoilTramp(void);
+void no_recoil(void);
 
-void Flash(void);
+void speed(void);
 
-void Multiplier(void);
+void mul(void);
 
 #ifdef __cplusplus
 }
 #endif // __cplusplus
+
+} // assembly
 
 #endif // ASSEMBLY_HEADER

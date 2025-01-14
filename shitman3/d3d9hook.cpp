@@ -1,33 +1,29 @@
 #include "d3d9hook.hpp"
 
-static HWND g_window;
-
 [[nodiscard]]
-BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam) {
-    UNREFERENCED_PARAMETER(lParam);
-
-    DWORD wndProcId;
+static BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam) {
+    DWORD wndProcId = 0;
     GetWindowThreadProcessId(handle, &wndProcId);
 
     if (GetCurrentProcessId() != wndProcId) {
-        return TRUE; // skip to next g_window
+        return TRUE; // skip to next window
     }
 
-    g_window = handle;
-    return FALSE; // g_window found abort search
+    *(HWND *)lParam = handle;
+    return false; // window found abort search
 }
 
 [[nodiscard]]
-HWND GetProcessWindow() {
-    g_window = NULL;
-    EnumWindows(EnumWindowsCallback, (LPARAM)nullptr);
+static inline HWND GetProcessWindow() {
+    HWND window = nullptr;
+    EnumWindows(EnumWindowsCallback, (LPARAM)&window);
+    window && SetForegroundWindow(window);
 
-    return g_window;
+    return window;
 }
 
-[[nodiscard]]
-bool GetD3D9Device(void** pTable, size_t Size) {
-    if (!pTable) {
+bool GetD3D9Device(void** vtable, size_t size) {
+    if (!vtable) {
         return false;
     }
 
@@ -37,7 +33,7 @@ bool GetD3D9Device(void** pTable, size_t Size) {
         return false;
     }
 
-    IDirect3DDevice9* pDummyDevice = NULL;
+    IDirect3DDevice9* pDummyDevice = nullptr;
 
     // options to create dummy device
     D3DPRESENT_PARAMETERS d3dpp;
@@ -53,7 +49,7 @@ bool GetD3D9Device(void** pTable, size_t Size) {
 
     HRESULT dummyDeviceCreated = IDirect3D9_CreateDevice(pD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dpp.hDeviceWindow, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pDummyDevice);
     if (dummyDeviceCreated != S_OK) {
-        // may fail in windowed fullscreen mode, trying again with g_windowed mode
+        // may fail in windowed fullscreen mode, trying again with windowed mode
         d3dpp.Windowed = !d3dpp.Windowed;
         dummyDeviceCreated = IDirect3D9_CreateDevice(pD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dpp.hDeviceWindow, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pDummyDevice);
 
@@ -62,7 +58,7 @@ bool GetD3D9Device(void** pTable, size_t Size) {
             return false;
         }
     }
-    memcpy(pTable, *(void ***)pDummyDevice, Size);
+    memcpy(vtable, *(void ***)pDummyDevice, size);
 
     pDummyDevice->Release();
     pD3D->Release();

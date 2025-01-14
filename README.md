@@ -39,7 +39,6 @@ The hacks written are:
 - Press <code>Numpad 4</code> to toggle One Shot Kill.
 - Press <code>Numpad 5</code> to toggle No Recoil.
 - Press <code>Numpad 6</code> to toggle Flash (5x speed hack).
-- Press <code>Numpad 9</code> to kill all enemies in a level.
 - Press <code>Shift + T</code> to teleport to current camera coordinates.
 - Press <code>Shift + X</code> to kill the entity at the current camera coordinates.
 - Press <code>T</code> to teleport to current entity.

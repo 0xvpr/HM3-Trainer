@@ -17,7 +17,7 @@ extern uintptr_t module_base_addr;
     return entityList && ( entityList->n_entities > 7 && entityList->n_entities < 167 );
 }
 
-void hacks::TeleportToCam() {
+void hacks::teleport_to_cam() {
     auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz, offsets::player_xyz_offsets);
     auto cam = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::cam_xyz, offsets::cam_xyz_offsets);
 
@@ -29,7 +29,7 @@ void hacks::TeleportToCam() {
 
 }
 
-void hacks::TeleportToEntity(unsigned target) {
+void hacks::teleport_to_entity(unsigned target) {
     auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz, offsets::player_xyz_offsets);
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
     auto entity = entityList->entities[target].entity;
@@ -41,7 +41,7 @@ void hacks::TeleportToEntity(unsigned target) {
     }
 }
 
-void hacks::ToggleInfiniteAmmo(bool bEnabled) {
+void hacks::toggle_infinite_ammo(bool bEnabled) {
      void* ammo_addr         = (void *)(module_base_addr + offsets::ammo);
      void* clip_counter_addr = (void *)(module_base_addr + offsets::clip_counter);
      void* syr_poison_addr   = (void *)(module_base_addr + offsets::syr_poison);
@@ -61,7 +61,7 @@ void hacks::ToggleInfiniteAmmo(bool bEnabled) {
 
 }
 
-void hacks::ToggleInfiniteHealth(bool bEnabled) {
+void hacks::toggle_infinite_health(bool bEnabled) {
      void* health_addr = (void *)(module_base_addr + offsets::health);
 
     if (bEnabled) {
@@ -72,7 +72,7 @@ void hacks::ToggleInfiniteHealth(bool bEnabled) {
 
 }
 
-void hacks::ToggleOneShot(bool bEnabled) {
+void hacks::toggle_one_shot(bool bEnabled) {
      void* one_shot_addr = (void *)(module_base_addr + offsets::one_shot);
 
     if (bEnabled) {
@@ -83,7 +83,7 @@ void hacks::ToggleOneShot(bool bEnabled) {
 
 }
 
-void hacks::ToggleStealth(bool bEnabled) {
+void hacks::toggle_stealth(bool bEnabled) {
      void* stealth_addr = (void *)(module_base_addr + offsets::stealth);
 
     if (bEnabled) {
@@ -94,7 +94,7 @@ void hacks::ToggleStealth(bool bEnabled) {
 
 }
 
-void hacks::ToggleNoRecoil(bool bEnabled) {
+void hacks::toggle_no_recoil(bool bEnabled) {
      void* recoil_addr = (void *)(module_base_addr + offsets::recoil);
 
     if (bEnabled) {
@@ -105,7 +105,7 @@ void hacks::ToggleNoRecoil(bool bEnabled) {
 
 }
 
-void hacks::ToggleFlash(bool bEnabled) {
+void hacks::toggle_flash(bool bEnabled) {
      void* speed_addr = (void *)(module_base_addr + offsets::speed);
      void* mul_addr   = (void *)(module_base_addr + offsets::mul);
 
@@ -119,7 +119,7 @@ void hacks::ToggleFlash(bool bEnabled) {
 
 }
 
-void hacks::KillCurrentEntity(unsigned target) {
+void hacks::kill_current_entity(unsigned target) {
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
 
     if (IsInGame() && entityList) {
@@ -134,7 +134,7 @@ void hacks::KillCurrentEntity(unsigned target) {
     }
 }
 
-void hacks::KillTargetInCrosshair() {
+void hacks::kill_target_in_crosshair() {
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
     auto cam = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::cam_xyz, offsets::cam_xyz_offsets);
 
@@ -169,7 +169,7 @@ void hacks::KillTargetInCrosshair() {
 }
 
 // Testing, causes crashes for now
-void hacks::DisarmEveryone() {
+void hacks::disarm_everyone() {
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
 
     if (IsInGame()) {

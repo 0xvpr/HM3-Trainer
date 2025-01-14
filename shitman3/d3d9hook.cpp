@@ -1,7 +1,7 @@
 #include "d3d9hook.hpp"
 
 [[nodiscard]]
-BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam) {
+static BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam) {
     DWORD wndProcId = 0;
     GetWindowThreadProcessId(handle, &wndProcId);
 
@@ -14,7 +14,7 @@ BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam) {
 }
 
 [[nodiscard]]
-HWND GetProcessWindow() {
+static inline HWND GetProcessWindow() {
     HWND window = nullptr;
     EnumWindows(EnumWindowsCallback, (LPARAM)&window);
     window && SetForegroundWindow(window);
@@ -22,9 +22,8 @@ HWND GetProcessWindow() {
     return window;
 }
 
-[[nodiscard]]
-bool GetD3D9Device(void** pTable, size_t Size) {
-    if (!pTable) {
+bool GetD3D9Device(void** vtable, size_t size) {
+    if (!vtable) {
         return false;
     }
 
@@ -59,7 +58,7 @@ bool GetD3D9Device(void** pTable, size_t Size) {
             return false;
         }
     }
-    memcpy(pTable, *(void ***)pDummyDevice, Size);
+    memcpy(vtable, *(void ***)pDummyDevice, size);
 
     pDummyDevice->Release();
     pD3D->Release();

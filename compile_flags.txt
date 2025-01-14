@@ -2,7 +2,7 @@
 -std=c++2b
 -isystem/usr/lib/gcc/x86_64-w64-mingw32/10-win32/include/c++
 -isystem/usr/lib/gcc/x86_64-w64-mingw32/10-win32/include/c++/x86_64-w64-mingw32/
--Iinclude
+-Ishitman3
 -Wall
 -Wextra
 -Werror

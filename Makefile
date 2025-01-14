@@ -14,15 +14,15 @@ ASFLAGS         = -f win32
 LIB             = lib
 BUILD           = build
 
-INCLUDE         = include
+INCLUDE         = $(PROJECT)
 INCLUDES        = $(addprefix -I,$(INCLUDE))
 
-SOURCE          = src
+SOURCE          = $(PROJECT)
 SOURCES         = $(wildcard $(SOURCE)/*.cpp)
 DEBUG_OBJECTS   = $(patsubst $(SOURCE)/%.cpp,$(BUILD)/%_d.o,$(SOURCES))
 RELEASE_OBJECTS = $(patsubst $(SOURCE)/%.cpp,$(BUILD)/%.o,$(SOURCES))
 
-ASM_SOURCE      = src
+ASM_SOURCE      = $(PROJECT)
 ASM_SOURCES     = $(wildcard $(ASM_SOURCE)/*.asm)
 ASM_OBJECTS     = $(patsubst $(ASM_SOURCE)/%.asm,$(BUILD)/%.obj,$(ASM_SOURCES))
 

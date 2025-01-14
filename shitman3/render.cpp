@@ -69,13 +69,13 @@ void render::menu(LPDIRECT3DDEVICE9 d3dDevice, const hack_menu& menu) {
                                d3dDevice );
 
         // Draw status
-            draw::draw_text( (menu.is_active() ? "[ Hacks Enabled ]" : "[ Hacks Disabled ]"),
-                              static_cast<int>(menu.x() + 7),
-                              static_cast<int>(menu.y() + 10),
-                              200,
-                              20,
-                              (menu.is_active() ? draw::color::green : draw::color::light_grey),
-                              m_font );
+        draw::draw_text( (menu.is_active() ? "[ Hacks Enabled ]" : "[ Hacks Disabled ]"),
+                          static_cast<int>(menu.x() + 7),
+                          static_cast<int>(menu.y() + 10),
+                          200,
+                          20,
+                          (menu.is_active() ? draw::color::green : draw::color::light_grey),
+                          m_font );
 
         // Draw cheats
         int idx = 1;

@@ -23,9 +23,9 @@ namespace offsets {
     constexpr uintptr_t               entity             = 0x41F83C;
 
     // Object Offsets
-    constexpr std::array<uint16_t, 7> cam_xyz_offsets      { 0x8C, 0x150, 0x10, 0x14, 0x54, 0x90, 0x2C };
+    constexpr std::array<uint16_t, 7> cam_xyz_offsets    = { 0x8C, 0x150, 0x10, 0x14, 0x54, 0x90, 0x2C };
     constexpr std::array<uint16_t, 4> player_xyz_offsets = { 0xA20, 0x4, 0x50, 0x24 };
-    constexpr std::array<uint16_t, 1> entity_offsets       { 0x40 };
+    constexpr std::array<uint16_t, 1> entity_offsets     = { 0x40 };
 }
 
 #endif // OFFSETS_HEADER

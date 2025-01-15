@@ -3,3 +3,5 @@
   Infinite sedative and poison syringes added to infinite ammo cheat.
 ### January 13, 2025
 - Bug fixed for cheats failing to highlight on hotkey press when cheats toggled off.
+### January 15, 2025
+- Render functions adjusted to improve readability and workflow.

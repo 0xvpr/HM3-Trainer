@@ -1,6 +1,6 @@
 #include "memory.hpp"
 
-bool memory::Detour(void* targetFunc, void* myFunc, size_t size) {
+bool memory::detour(void* targetFunc, void* myFunc, size_t size) {
     if (size < 5) {
         return false;
     }
@@ -18,7 +18,7 @@ bool memory::Detour(void* targetFunc, void* myFunc, size_t size) {
     return true;
 }
 
-bool memory::Detour(void* targetFunc, void(* myFuncPtr)(void), size_t size) {
+bool memory::detour(void* targetFunc, void(* myFuncPtr)(void), size_t size) {
     if (size < 5) {
         return false;
     }
@@ -36,7 +36,7 @@ bool memory::Detour(void* targetFunc, void(* myFuncPtr)(void), size_t size) {
     return true;
 }
 
-char* memory::TrampHook(char* src, char* dst, size_t size) {
+char* memory::trampoline_hook(char* src, char* dst, size_t size) {
     if (size < 5) {
         return 0;
     }
@@ -48,7 +48,7 @@ char* memory::TrampHook(char* src, char* dst, size_t size) {
     *(gateway + size) = (char)0xE9;
     *(uintptr_t *)(gateway + size + 1) = gateJmpAddress;
 
-    if (memory::Detour(src, dst, size)) {
+    if (memory::detour(src, dst, size)) {
         return gateway;
     } else {
         return nullptr;
@@ -67,7 +67,7 @@ static inline BOOL CompareByteArray(unsigned char* data, unsigned char* pattern,
     return true;
 }
 
-unsigned char* memory::FindPattern(unsigned char* base_addr, size_t img_size, unsigned char* pattern, size_t pattern_size) {
+unsigned char* memory::find_pattern(unsigned char* base_addr, size_t img_size, unsigned char* pattern, size_t pattern_size) {
     BYTE first = pattern[0];
     PBYTE last = base_addr + img_size - pattern_size;
 

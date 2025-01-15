@@ -52,7 +52,7 @@ void set_current_entity(int operation) {
     }
 }
 
-bool events::handle_keyboard(hack_menu& menu) {
+bool events::handle_keyboard(menu::menu& menu) {
     if (GetAsyncKeyState(VK_TAB) & 1) {
         bool active = menu.toggle();
 

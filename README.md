@@ -9,7 +9,7 @@
 <br>
   
 ## Overview:
-<img src="./resc/Hack-Menu-Screenshot.png"/>
+<img src="./resources/hack_menu_screenshot.png"/>
 This is a repository for a Hitman Blood Money Trainer that I built with C, C++, and some Assembly.
 
 The main purpose of this project was to get familiar with programming internal GUIs from scratch and  

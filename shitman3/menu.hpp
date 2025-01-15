@@ -1,145 +1,83 @@
-#ifndef MENU_HEADER
-#define MENU_HEADER
+#ifndef   MENU_HEADER
+#define   MENU_HEADER
 
-#include <sstream>
+#include "toggle.hpp"
 
-#include <memory>
-#include <atomic>
+#include <d3d9.h>
+
+#include <string>
 #include <array>
 
-static constexpr size_t c_item_height = 25;
-static constexpr size_t c_padding     = 50;
+namespace menu {
 
-struct position {
-    std::int16_t x;
-    std::int16_t y;
-    std::int16_t width;
-    std::int16_t height;
-};
-
-struct resolution {
-    std::int16_t width;
-    std::int16_t height;
-};
-
-class toggleable {
-private:
-    [[nodiscard]] virtual bool is_active() const = 0;
-    [[nodiscard]] virtual bool toggle()    const = 0;
+class item : private toggle::toggleable {
 public:
-    mutable std::atomic<bool> is_active_ = false;
-};
+    item() = delete;
+    item(const std::string_view hotkey, const std::string_view text);
+    virtual ~item() {}
 
-class Item : private toggleable {
-public:
-    Item() = delete;
-    Item(const std::string_view hotkey, const std::string_view text)
-    : hotkey_    ( hotkey )
-    , text_      ( text   )
-    , repr_      { '(', 'n', 'u', 'l', 'l', ')', 0 }
-    {
-        std::stringstream ss;
-        ss << hotkey << ": " << text;
+    [[nodiscard]] inline const char* repr() const { return repr_.c_str(); }
 
-        if ( sizeof(repr_) > ss.str().size() ) {
-            memcpy( repr_,
-                    ss.str().c_str(),
-                    ss.str().size() );
-            repr_[sizeof(repr_)-1] = 0;
-        }
-    }
-    virtual ~Item() {}
-
-    const char* c_str_repr() const {
-        return repr_;
-    }
-
-    [[nodiscard]] virtual bool is_active() const {
-        return is_active_.load( std::memory_order_acquire );
-    } 
-    [[nodiscard]] virtual bool toggle() const {
-        auto old = is_active_.load( std::memory_order_acquire );
-        while (!is_active_.compare_exchange_weak(old, !old));
-        return is_active_;
-    }
-
+    [[nodiscard]] virtual bool is_active() const;
+    [[nodiscard]] virtual bool toggle() const;
 
 private:
-    const std::string_view    hotkey_;
-    const std::string_view    text_;
-    char                      repr_[64];
+    const std::string repr_;
 };
 
-class hack_menu : private toggleable {
+class menu : private toggle::toggleable {
+    struct position {
+        std::int16_t x;
+        std::int16_t y;
+        std::int16_t width;
+        std::int16_t height;
+    };
+
+    struct resolution {
+        std::int16_t width;
+        std::int16_t height;
+    };
+
+    static constexpr uint32_t c_font_size = 20;
+    static constexpr size_t c_item_height = 25;
+    static constexpr size_t c_padding     = 50;
+
+    menu(position&& position);
+
 public:
-    static hack_menu* instance() {
-        if (instance_ == nullptr) {
-            instance_ = new hack_menu( position{30, 120, 0 ,0} );
-        }
+    static menu* instance();
+    static void shutdown();
+    static bool is_initialized();
 
-        return instance_;
-    }
+    menu() = delete;
+    menu(menu&) = delete;
+    menu(menu&&) = delete;
 
-    static void shutdown() {
-        if (instance_) {
-            delete instance_;
-        }
-    }
-
-    static bool is_initialized() { return instance_ != nullptr; }
-
-    hack_menu() = delete;
-    hack_menu(hack_menu&) = delete;
-    hack_menu(hack_menu&&) = delete;
-    virtual ~hack_menu() {};
+    virtual ~menu() {};
 
     [[nodiscard]] const auto& items()                       const { return items_; }
-    [[nodiscard]] const Item& operator[](std::size_t index) const { return items_[index]; }
+    [[nodiscard]] const item& operator[](std::size_t index) const { return items_[index]; }
 
     [[nodiscard]] constexpr inline int  x()                 const { return position_.x; }
     [[nodiscard]] constexpr inline int  y()                 const { return position_.y; }
-    [[nodiscard]] constexpr inline int  menu_height()       const { return c_padding + (c_item_height * (sizeof(items_)/sizeof(Item)) ); }
+    [[nodiscard]] constexpr inline int  menu_height()       const { return c_padding + (c_item_height * (sizeof(items_)/sizeof(item)) ); }
     [[nodiscard]] constexpr inline int  game_width()        const { return resolution_.height; }
     [[nodiscard]] constexpr inline int  game_height()       const { return resolution_.width; }
     [[nodiscard]]           inline bool is_maximized()      const { return maximized_.load(); }
 
-    [[nodiscard]] virtual bool is_active() const {
-        return is_active_.load( std::memory_order_acquire );
-    } 
-    [[nodiscard]] virtual bool toggle() const {
-        auto old = is_active_.load( std::memory_order_acquire );
-        while (!is_active_.compare_exchange_weak(old, !old));
-        return is_active_;
-    }
+    [[nodiscard]] virtual bool is_active() const;
+    [[nodiscard]] virtual bool toggle() const;
 
-    hack_menu(position&& position)
-    : position_    ( position )
-    , maximized_   ( true )
-    {
-        // 0xDEADBEEF
-    }
+    void render(LPDIRECT3DDEVICE9 d3dDevice) const;
 
 private:
-    static hack_menu* instance_;
-
-    std::array<Item, 10> items_ = {
-        Item{ "NUM1",    "Infinite Ammo"      },
-        Item{ "NUM2",    "Infinite Health"    },
-        Item{ "NUM3",    "One Shot Kill"      },
-        Item{ "NUM4",    "No Reactions"       },
-        Item{ "NUM5",    "No Recoil"          },
-        Item{ "NUM6",    "Flash"              },
-//      Item{ "NUM9",    "Disarm Everyone"    }, // busted, causes crashes
-        Item{ "Shift+T", "Teleport to Cam"    },
-        Item{ "Shift+X", "Kill Cam Target"    },
-        Item{ "T",       "Teleport to Target" },
-        Item{ "X",       "Kill Target"        }
-    };
-
-    position                         position_;
-    resolution                       resolution_;
-
-    mutable std::atomic<bool>        maximized_;
+    static menu*              instance_;
+    mutable std::atomic<bool> maximized_;
+    position                  position_;
+    resolution                resolution_;
+    std::array<item, 10>      items_;
 };
+
+} // namespace menu
 
 #endif // MENU_HEADER

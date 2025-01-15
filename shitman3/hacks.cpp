@@ -11,17 +11,17 @@
 extern uintptr_t module_base_addr;
 
 [[nodiscard]]
- inline bool IsInGame() {
+inline bool is_ingame() {
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
 
     return entityList && ( entityList->n_entities > 7 && entityList->n_entities < 167 );
 }
 
 void hacks::teleport_to_cam() {
-    auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz, offsets::player_xyz_offsets);
-    auto cam = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::cam_xyz, offsets::cam_xyz_offsets);
+    auto player = memory::find_dynamic_address<Coords *>(module_base_addr + offsets::player_xyz, offsets::player_xyz_offsets);
+    auto cam = memory::find_dynamic_address<Coords *>(module_base_addr + offsets::cam_xyz, offsets::cam_xyz_offsets);
 
-    if (IsInGame()) {
+    if (is_ingame()) {
         player->x = cam->x +  5;
         player->y = cam->y + 10;
         player->z = cam->z +  5;
@@ -30,11 +30,11 @@ void hacks::teleport_to_cam() {
 }
 
 void hacks::teleport_to_entity(unsigned target) {
-    auto player = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::player_xyz, offsets::player_xyz_offsets);
+    auto player = memory::find_dynamic_address<Coords *>(module_base_addr + offsets::player_xyz, offsets::player_xyz_offsets);
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
     auto entity = entityList->entities[target].entity;
 
-    if (IsInGame() && entityList && entity) {
+    if (is_ingame() && entityList && entity) {
         player->x = entity->x +  5;
         player->y = entity->y +  5;
         player->z = entity->z +  5;
@@ -48,15 +48,15 @@ void hacks::toggle_infinite_ammo(bool bEnabled) {
      void* syr_sedative_addr = (void *)(module_base_addr + offsets::syr_sedative);
 
     if (bEnabled) {
-        memory::Patch(ammo_addr, patches::ammo_patch);
-        memory::Patch(clip_counter_addr, patches::clip_counter_patch);
-        memory::Patch(syr_poison_addr, patches::syr_poison_patch);
-        memory::Patch(syr_sedative_addr, patches::syr_sedative_patch);
+        memory::patch(ammo_addr, patches::ammo_patch);
+        memory::patch(clip_counter_addr, patches::clip_counter_patch);
+        memory::patch(syr_poison_addr, patches::syr_poison_patch);
+        memory::patch(syr_sedative_addr, patches::syr_sedative_patch);
     } else {
-        memory::Patch(ammo_addr, patches::ammo_original);
-        memory::Patch(clip_counter_addr, patches::clip_counter_original);
-        memory::Patch(syr_poison_addr, patches::syr_poison_original);
-        memory::Patch(syr_sedative_addr, patches::syr_sedative_original);
+        memory::patch(ammo_addr, patches::ammo_original);
+        memory::patch(clip_counter_addr, patches::clip_counter_original);
+        memory::patch(syr_poison_addr, patches::syr_poison_original);
+        memory::patch(syr_sedative_addr, patches::syr_sedative_original);
     }
 
 }
@@ -65,9 +65,9 @@ void hacks::toggle_infinite_health(bool bEnabled) {
      void* health_addr = (void *)(module_base_addr + offsets::health);
 
     if (bEnabled) {
-        memory::Patch(health_addr, patches::health_patch);
+        memory::patch(health_addr, patches::health_patch);
     } else {
-        memory::Patch(health_addr, patches::health_original);
+        memory::patch(health_addr, patches::health_original);
     }
 
 }
@@ -76,9 +76,9 @@ void hacks::toggle_one_shot(bool bEnabled) {
      void* one_shot_addr = (void *)(module_base_addr + offsets::one_shot);
 
     if (bEnabled) {
-        memory::Patch(one_shot_addr, patches::one_shot_patch); // accidental kills no longer kill
+        memory::patch(one_shot_addr, patches::one_shot_patch); // accidental kills no longer kill
     } else {
-        memory::Patch(one_shot_addr, patches::one_shot_original);
+        memory::patch(one_shot_addr, patches::one_shot_original);
     }
 
 }
@@ -87,9 +87,9 @@ void hacks::toggle_stealth(bool bEnabled) {
      void* stealth_addr = (void *)(module_base_addr + offsets::stealth);
 
     if (bEnabled) {
-        memory::Patch(stealth_addr, patches::stealth_patch);
+        memory::patch(stealth_addr, patches::stealth_patch);
     } else {
-        memory::Patch(stealth_addr, patches::stealth_original);
+        memory::patch(stealth_addr, patches::stealth_original);
     }
 
 }
@@ -98,9 +98,9 @@ void hacks::toggle_no_recoil(bool bEnabled) {
      void* recoil_addr = (void *)(module_base_addr + offsets::recoil);
 
     if (bEnabled) {
-        memory::Detour(recoil_addr, assembly::no_recoil, sizeof(patches::recoil_original));
+        memory::detour(recoil_addr, assembly::no_recoil, sizeof(patches::recoil_original));
     } else {
-        memory::Patch(recoil_addr, patches::recoil_original); 
+        memory::patch(recoil_addr, patches::recoil_original); 
     }
 
 }
@@ -110,11 +110,11 @@ void hacks::toggle_flash(bool bEnabled) {
      void* mul_addr   = (void *)(module_base_addr + offsets::mul);
 
     if (bEnabled) {
-        memory::Detour(speed_addr, assembly::speed, sizeof(patches::speed_original));
-        memory::Detour(mul_addr, assembly::mul, sizeof(patches::mul_original));
+        memory::detour(speed_addr, assembly::speed, sizeof(patches::speed_original));
+        memory::detour(mul_addr, assembly::mul, sizeof(patches::mul_original));
     } else {
-        memory::Patch(speed_addr, patches::speed_original); 
-        memory::Patch(mul_addr, patches::mul_original); 
+        memory::patch(speed_addr, patches::speed_original); 
+        memory::patch(mul_addr, patches::mul_original); 
     }
 
 }
@@ -122,7 +122,7 @@ void hacks::toggle_flash(bool bEnabled) {
 void hacks::kill_current_entity(unsigned target) {
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
 
-    if (IsInGame() && entityList) {
+    if (is_ingame() && entityList) {
         auto ent = entityList->entities[target].entity;
         if (!ent) {
             return;
@@ -136,13 +136,13 @@ void hacks::kill_current_entity(unsigned target) {
 
 void hacks::kill_target_in_crosshair() {
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
-    auto cam = memory::FindDynamicAddress<Coords *>(module_base_addr + offsets::cam_xyz, offsets::cam_xyz_offsets);
+    auto cam = memory::find_dynamic_address<Coords *>(module_base_addr + offsets::cam_xyz, offsets::cam_xyz_offsets);
 
     if (!entityList || !cam) {
         return;
     }
 
-    if (IsInGame()) {
+    if (is_ingame()) {
         size_t n_entities = entityList->n_entities;
         for (size_t i = 0; i < n_entities; ++i) {
             auto ent = entityList->entities[i].entity;
@@ -172,7 +172,7 @@ void hacks::kill_target_in_crosshair() {
 void hacks::disarm_everyone() {
     auto entityList = *(EntityList **)(module_base_addr + offsets::entity);
 
-    if (IsInGame()) {
+    if (is_ingame()) {
         size_t n_entities = entityList->n_entities; 
         for (size_t i = 0; i < n_entities; ++i) {
             auto ent = entityList->entities[i].entity;

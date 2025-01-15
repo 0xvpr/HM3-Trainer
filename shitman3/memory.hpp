@@ -17,7 +17,7 @@ namespace memory {
  * @return: addr
 **/
 template <typename T, typename array_t, size_t size> [[nodiscard]]
-T FindDynamicAddress(uintptr_t ptr, const std::array<array_t, size>& offsets) {
+T find_dynamic_address(uintptr_t ptr, const std::array<array_t, size>& offsets) {
 
     auto addr = ptr;
 
@@ -43,7 +43,7 @@ T FindDynamicAddress(uintptr_t ptr, const std::array<array_t, size>& offsets) {
  * @return: void
 **/
 template <typename T, std::size_t size>
-bool Patch(void* dst, const std::array<T, size>& src) {
+bool patch(void* dst, const std::array<T, size>& src) {
     DWORD oldprotect;
 
     VirtualProtect(dst, size, PAGE_EXECUTE_WRITECOPY, &oldprotect);
@@ -71,7 +71,7 @@ bool Patch(void* dst, const std::array<T, size>& src) {
  * @return: void
 **/
 template <typename T>
-bool Patch(void* dst, T* src, size_t size) {
+bool patch(void* dst, T* src, size_t size) {
     DWORD oldprotect;
 
     VirtualProtect(dst, size, PAGE_EXECUTE_WRITECOPY, &oldprotect);
@@ -99,7 +99,7 @@ bool Patch(void* dst, T* src, size_t size) {
  *
  * @return: bool
 **/
-bool Detour(void* targetFunc, void* myFunc, size_t size);
+bool detour(void* targetFunc, void* myFunc, size_t size);
 
 /**
  * Hooks into a function and detours the target function to another function.
@@ -110,7 +110,7 @@ bool Detour(void* targetFunc, void* myFunc, size_t size);
  *
  * @return: bool
 **/
-bool Detour(void* targetFunc, void (* myFuncPtr)(void), size_t size);
+bool detour(void* targetFunc, void (* myFuncPtr)(void), size_t size);
 
 /**
  * Hooks into a function and detours the target function to another function, then jumps back.
@@ -122,7 +122,7 @@ bool Detour(void* targetFunc, void (* myFuncPtr)(void), size_t size);
  * @return: char*
 **/
 [[nodiscard]]
-char* TrampHook(char* targetFunc, char* myFunc, size_t size);
+char* trampoline_hook(char* targetFunc, char* myFunc, size_t size);
 
 /**
  * Scans a given chunk of data for the given pattern and mask.
@@ -135,7 +135,7 @@ char* TrampHook(char* targetFunc, char* myFunc, size_t size);
  * @return: Pointer of the pattern found, 0 otherwise.
 **/
 [[nodiscard]]
-unsigned char* FindPattern(unsigned char* base_addr, size_t img_size, unsigned char* pattern, size_t s);
+unsigned char* find_pattern(unsigned char* base_addr, size_t img_size, unsigned char* pattern, size_t s);
 
 } // namespace memory
 

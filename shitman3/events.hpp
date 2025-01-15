@@ -4,7 +4,9 @@
 #include "menu.hpp"
 
 namespace events {
-    bool handle_keyboard(hack_menu& menu);
+
+bool handle_keyboard(menu::menu& menu);
+
 }
 
 #endif // EVENTS_HEADER

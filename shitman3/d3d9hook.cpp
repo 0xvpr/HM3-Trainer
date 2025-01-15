@@ -1,7 +1,7 @@
 #include "d3d9hook.hpp"
 
 [[nodiscard]]
-static BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam) {
+static BOOL CALLBACK enum_windows_callback(HWND handle, LPARAM lParam) {
     DWORD wndProcId = 0;
     GetWindowThreadProcessId(handle, &wndProcId);
 
@@ -16,24 +16,24 @@ static BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam) {
 [[nodiscard]]
 static inline HWND GetProcessWindow() {
     HWND window = nullptr;
-    EnumWindows(EnumWindowsCallback, (LPARAM)&window);
+    EnumWindows(enum_windows_callback, (LPARAM)&window);
     window && SetForegroundWindow(window);
 
     return window;
 }
 
-bool GetD3D9Device(void** vtable, size_t size) {
+bool d3d9::get_device(void** vtable, size_t size) {
     if (!vtable) {
         return false;
     }
 
-    IDirect3D9* pD3D = Direct3DCreate9(D3D_SDK_VERSION);
+    IDirect3D9* d3d_ptr = Direct3DCreate9(D3D_SDK_VERSION);
 
-    if (!pD3D) {
+    if (!d3d_ptr) {
         return false;
     }
 
-    IDirect3DDevice9* pDummyDevice = nullptr;
+    IDirect3DDevice9* dummy_device_ptr = nullptr;
 
     // options to create dummy device
     D3DPRESENT_PARAMETERS d3dpp;
@@ -47,20 +47,20 @@ bool GetD3D9Device(void** vtable, size_t size) {
         // Wait for window to be Foreground
     }
 
-    HRESULT dummyDeviceCreated = IDirect3D9_CreateDevice(pD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dpp.hDeviceWindow, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pDummyDevice);
+    HRESULT dummyDeviceCreated = IDirect3D9_CreateDevice(d3d_ptr, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dpp.hDeviceWindow, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &dummy_device_ptr);
     if (dummyDeviceCreated != S_OK) {
         // may fail in windowed fullscreen mode, trying again with windowed mode
         d3dpp.Windowed = !d3dpp.Windowed;
-        dummyDeviceCreated = IDirect3D9_CreateDevice(pD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dpp.hDeviceWindow, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pDummyDevice);
+        dummyDeviceCreated = IDirect3D9_CreateDevice(d3d_ptr, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dpp.hDeviceWindow, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &dummy_device_ptr);
 
         if (dummyDeviceCreated != S_OK) {
-            pD3D->Release();
+            d3d_ptr->Release();
             return false;
         }
     }
-    memcpy(vtable, *(void ***)pDummyDevice, size);
+    memcpy(vtable, *(void ***)dummy_device_ptr, size);
 
-    pDummyDevice->Release();
-    pD3D->Release();
+    dummy_device_ptr->Release();
+    d3d_ptr->Release();
     return true;
 }

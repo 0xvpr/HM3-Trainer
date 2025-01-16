@@ -2,6 +2,7 @@
 #define   MENU_HEADER
 
 #include "toggle.hpp"
+#include "events.hpp"
 
 #include <d3d9.h>
 
@@ -25,7 +26,10 @@ private:
     const std::string repr_;
 };
 
-class menu : private toggle::toggleable {
+class menu
+: private toggle::toggleable
+, private events::event_handler
+{
     struct position {
         std::int16_t x;
         std::int16_t y;
@@ -68,7 +72,8 @@ public:
     [[nodiscard]] virtual bool is_active() const;
     [[nodiscard]] virtual bool toggle() const;
 
-    void render(LPDIRECT3DDEVICE9 d3dDevice) const;
+    virtual void render(LPDIRECT3DDEVICE9 d3dDevice) const;
+    virtual void run();
 
 private:
     static menu*              instance_;

@@ -18,7 +18,7 @@
 
 
 // primitive global variables
-uintptr_t module_base_addr = 0;
+uintptr_t g_module_base_addr = 0;
 
 // global pointers
 static d3d9::endscene_t original_endscene = nullptr;
@@ -36,7 +36,7 @@ HRESULT APIENTRY endscene_hook(LPDIRECT3DDEVICE9 device_ptr) {
 }
 
 DWORD WINAPI main_thread(LPVOID lpReserved) {
-    module_base_addr = reinterpret_cast<uintptr_t>(GetModuleHandle(nullptr));
+    g_module_base_addr = reinterpret_cast<uintptr_t>(GetModuleHandle(nullptr));
     
     if ( d3d9::get_device(d3d9_device, sizeof(d3d9_device)) ) {
         memcpy( original_endscene_bytes,
@@ -50,9 +50,7 @@ DWORD WINAPI main_thread(LPVOID lpReserved) {
     }
 
     auto& menu = *menu::menu::instance();
-    while ( events::handle_keyboard(menu) == false ) {
-        // Main Loop
-    }
+    menu.run();
     menu::menu::shutdown();
 
     memory::patch( d3d9_device[d3d9::render_function_index], original_endscene_bytes, sizeof(original_endscene_bytes) );

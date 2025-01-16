@@ -1,12 +1,29 @@
 #include "menu.hpp"
 
+#include "offsets.hpp"
 #include "drawing.hpp"
+#include "entity.hpp"
+#include "hacks.hpp"
 
-extern std::uint32_t current_entity;
+extern uintptr_t g_module_base_addr;
 
 menu::menu* menu::menu::instance_ = nullptr;
-
 static LPD3DXFONT font_ = nullptr;
+std::uint32_t current_entity = 0;
+
+enum cheats : std::size_t {
+    infinite_ammo   =  0,
+    infinite_health =  1,
+    one_shot_kill   =  2,
+    no_reactions    =  3,
+    no_recoil       =  4,
+    flash           =  5,
+    teleport_to_cam =  6,
+    kill_cam_target =  7,
+    teleport_to_ent =  8,
+    kill_target_ent =  9,
+    kill_everyone   = 10
+};
 
 menu::item::item(const std::string_view hotkey, const std::string_view text)
 : repr_( std::string(hotkey).append(": ").append(text) )
@@ -172,4 +189,114 @@ menu::menu::menu(menu::position&& p)
                 item{ "X",       "Kill Target"        } }
 {
     // 0xDEADBEEF
+}
+
+static inline
+void set_current_entity(int operation) {
+    auto entityList = *(EntityList **)(g_module_base_addr + offsets::entity);
+    if (!entityList || !(entityList->n_entities > 7 && entityList->n_entities < 167)) {
+        current_entity = 0;
+        return;
+    }
+
+    switch (operation) {
+    case 1:
+        if (current_entity > entityList->n_entities - 2) {
+            current_entity = 0;
+        } else {
+            current_entity += 1;
+        }
+        break;
+    case -1:
+        if (current_entity == 0) {
+            current_entity = entityList->n_entities - 1;
+        } else {
+            current_entity -= 1;
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+void menu::menu::run() {
+    while (true) {
+        if (GetAsyncKeyState(VK_TAB) & 1) {
+            bool active = toggle();
+
+            hacks::toggle_infinite_ammo  ( active & items_[cheats::infinite_ammo].is_active()   );
+            hacks::toggle_infinite_health( active & items_[cheats::infinite_health].is_active() );
+            hacks::toggle_one_shot       ( active & items_[cheats::one_shot_kill].is_active()   );
+            hacks::toggle_stealth        ( active & items_[cheats::no_reactions].is_active()    );
+            hacks::toggle_no_recoil      ( active & items_[cheats::no_recoil].is_active()       );
+            hacks::toggle_flash          ( active & items_[cheats::flash].is_active()           );
+        }
+
+        if (GetAsyncKeyState(VK_NUMPAD1) & 1) {
+            bool active = items_[cheats::infinite_ammo].toggle();
+            if (is_active()) { hacks::toggle_infinite_ammo( active ); }
+        }
+        if (GetAsyncKeyState(VK_NUMPAD2) & 1) {
+            bool active = items_[cheats::infinite_health].toggle();
+            if (is_active()) { hacks::toggle_infinite_health( active ); }
+        }
+        if (GetAsyncKeyState(VK_NUMPAD3) & 1) {
+            bool active = items_[cheats::one_shot_kill].toggle();
+            if (is_active()) { hacks::toggle_one_shot( active ); }
+        }
+        if (GetAsyncKeyState(VK_NUMPAD4) & 1) {
+            bool active = items_[cheats::no_reactions].toggle();
+            if (is_active()) { hacks::toggle_stealth( active ); }
+        }
+        if (GetAsyncKeyState(VK_NUMPAD5) & 1) {
+            bool active = items_[cheats::no_recoil].toggle();
+            if (is_active()) { hacks::toggle_no_recoil( active ); }
+        }
+        if (GetAsyncKeyState(VK_NUMPAD6) & 1) {
+            bool active = items_[cheats::flash].toggle();
+            if (is_active()) { hacks::toggle_flash( active ); }
+        }
+
+//      // broken
+//      if (is_active() && GetAsyncKeyState(VK_NUMPAD9) & 1) {
+//          hacks::DisarmEveryone();
+//      }
+
+        // Previous Entity
+        if (is_active() && (GetAsyncKeyState(VK_OEM_4) & 1) > 0) {
+            set_current_entity(-1);
+        }
+
+        // Next Entity
+        if (is_active() && (GetAsyncKeyState(VK_OEM_6) & 1) > 0) {
+            set_current_entity(1);
+        }
+
+        if (is_active() && ((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && (GetAsyncKeyState('T') & 1)) {
+            hacks::teleport_to_cam();
+        }
+
+        if (is_active() && !((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && GetAsyncKeyState('X') & 1) {
+            hacks::kill_current_entity(current_entity);
+        }
+
+        if (is_active() && !((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && (GetAsyncKeyState('T') & 1)) {
+            hacks::teleport_to_entity(current_entity);
+        }
+
+        if (is_active() && ((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && GetAsyncKeyState('X') & 1) {
+            hacks::kill_target_in_crosshair();
+        }
+
+        if (GetAsyncKeyState(VK_HOME)) {
+            hacks::toggle_infinite_health( false );
+            hacks::toggle_infinite_ammo  ( false );
+            hacks::toggle_no_recoil      ( false );
+            hacks::toggle_one_shot       ( false );
+            hacks::toggle_stealth        ( false );
+            hacks::toggle_flash          ( false );
+
+            return;
+        }
+    }
 }

@@ -1,12 +1,14 @@
 #ifndef EVENTS_HEADER
 #define EVENTS_HEADER
 
-#include "menu.hpp"
+#include <cstdint>
 
 namespace events {
 
-bool handle_keyboard(menu::menu& menu);
+class event_handler {
+    virtual void run() = 0;
+};
 
-}
+} // namespace events
 
 #endif // EVENTS_HEADER

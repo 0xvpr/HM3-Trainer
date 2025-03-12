@@ -60,3 +60,6 @@ _deps
 Bin
 Build
 old
+
+# Helper scripts
+inject.sh

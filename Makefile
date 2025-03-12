@@ -34,7 +34,7 @@ all: $(LIB) $(BUILD) $(PROJECT)
 $(PROJECT): release
 
 debug:   CFLAGS  += -O2 -g
-release: CFLAGS  += -march=native -Ofast -fPIE -funsafe-math-optimizations -fomit-frame-pointer
+release: CFLAGS  += -march=native -mavx512f -Ofast -fPIE -funsafe-math-optimizations -fomit-frame-pointer
 release: CFLAGS  += -funroll-loops -funsafe-loop-optimizations -funswitch-loops -floop-parallelize-all
 release: CFLAGS  += -finline-functions -falign-functions -falign-loops -falign-jumps -fno-function-sections
 release: CFLAGS  += -fno-ident -fvisibility=hidden -fstrict-aliasing
@@ -60,7 +60,6 @@ $(LIB):
 	mkdir -p ./lib
 
 $(BUILD):
-	mkdir -p ./build
 	mkdir -p ./build
 
 .PHONY: docker-container

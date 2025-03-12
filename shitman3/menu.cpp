@@ -5,11 +5,6 @@
 #include "entity.hpp"
 #include "hacks.hpp"
 
-extern uintptr_t g_module_base_addr;
-
-menu::menu* menu::menu::instance_ = nullptr;
-static LPD3DXFONT font_ = nullptr;
-std::uint32_t current_entity = 0;
 
 enum cheats : std::size_t {
     infinite_ammo   =  0,
@@ -24,6 +19,16 @@ enum cheats : std::size_t {
     kill_target_ent =  9,
     kill_everyone   = 10
 };
+
+
+// Static menu:: members
+menu::menu* menu::menu::instance_ = nullptr;
+uintptr_t menu::menu::module_base_addr_ = 0;
+
+// Static globals
+static std::uint32_t g_current_entity = 0;
+static LPD3DXFONT g_font = nullptr;
+
 
 menu::item::item(const std::string_view hotkey, const std::string_view text)
 : repr_( std::string(hotkey).append(": ").append(text) )
@@ -41,21 +46,19 @@ bool menu::item::toggle() const {
 }
 
 void menu::menu::render(LPDIRECT3DDEVICE9 device_ptr) const {
-    if (font_ == nullptr) {
-        D3DXCreateFont(
-            device_ptr,                   // LPDIRECT3DDEVICE9 device_ptr
-            c_font_size,                  // Height
-            0,                            // Width
-            FW_BOLD,                      // Weight
-            0,                            // MIP Levels
-            false,                        // Italic
-            DEFAULT_CHARSET,              // Charset
-            OUT_DEFAULT_PRECIS,           // Precision
-            DEFAULT_QUALITY,              // Quality
-            DEFAULT_PITCH | FF_DONTCARE,  // Pitch and Family
-            "Arial",                      // Font name
-            &font_                        // LPD3DXFONT
-        );
+    if (!g_font) {
+        D3DXCreateFontA( device_ptr,                   // LPDIRECT3DDEVICE9
+                         c_font_size,                  // Height
+                         0,                            // Width
+                         FW_BOLD,                      // Weight
+                         0,                            // MIP Levels
+                         false,                        // Italic
+                         DEFAULT_CHARSET,              // Charset
+                         OUT_DEFAULT_PRECIS,           // Precision
+                         DEFAULT_QUALITY,              // Quality
+                         DEFAULT_PITCH | FF_DONTCARE,  // Pitch and Family
+                         "Arial",                      // Font name
+                         &g_font );                    // LPD3DXFONT
     }
 
     D3DDISPLAYMODE  d3d_display_mode{};
@@ -67,14 +70,14 @@ void menu::menu::render(LPDIRECT3DDEVICE9 device_ptr) const {
 
     // Draw Height
     memset(entity_buffer, 0, sizeof(entity_buffer));
-    snprintf(entity_buffer, sizeof(entity_buffer), "Current Entity: %u", current_entity);
+    snprintf(entity_buffer, sizeof(entity_buffer), "Current Entity: %u", g_current_entity);
     draw::draw_text( entity_buffer,
                      static_cast<int>(x()),
                      static_cast<int>(y() - 25),
                      200,
                      20,
                      draw::color::light_grey,
-                     font_ );
+                     g_font );
 
     if (is_maximized()) {
         factor = 1.0;
@@ -101,7 +104,7 @@ void menu::menu::render(LPDIRECT3DDEVICE9 device_ptr) const {
                           200,
                           20,
                           (is_active() ? draw::color::green : draw::color::light_grey),
-                          font_ );
+                          g_font );
 
         // Draw cheats
         int idx = 1;
@@ -112,7 +115,7 @@ void menu::menu::render(LPDIRECT3DDEVICE9 device_ptr) const {
                              200,
                              20,
                              (item.is_active() ? draw::color::green : draw::color::light_grey),
-                             font_ );
+                             g_font );
 
             ++idx;
         }
@@ -123,7 +126,7 @@ void menu::menu::render(LPDIRECT3DDEVICE9 device_ptr) const {
                          200,
                          20,
                          draw::color::light_grey,
-                         font_ );
+                         g_font );
     } else {
         factor = 0.25;
 
@@ -146,7 +149,7 @@ void menu::menu::render(LPDIRECT3DDEVICE9 device_ptr) const {
 
 menu::menu* menu::menu::instance() {
     if (instance_ == nullptr) {
-        instance_ = new menu( position{30, 120, 0 ,0} );
+        instance_ = new menu( position{30, 120, 0 ,0});
     }
 
     return instance_;
@@ -156,10 +159,6 @@ void menu::menu::shutdown() {
     if (instance_) {
         delete instance_;
     }
-}
-
-bool menu::menu::is_initialized() {
-    return instance_ != nullptr;
 }
 
 bool menu::menu::is_active() const {
@@ -188,30 +187,30 @@ menu::menu::menu(menu::position&& p)
                 item{ "T",       "Teleport to Target" },
                 item{ "X",       "Kill Target"        } }
 {
-    // 0xDEADBEEF
+    module_base_addr_ = reinterpret_cast<uintptr_t>(GetModuleHandleA(nullptr));
 }
 
 static inline
 void set_current_entity(int operation) {
-    auto entityList = *(EntityList **)(g_module_base_addr + offsets::entity);
+    auto entityList = *(EntityList **)(menu::menu::module_base_addr() + offsets::entity);
     if (!entityList || !(entityList->n_entities > 7 && entityList->n_entities < 167)) {
-        current_entity = 0;
+        g_current_entity = 0;
         return;
     }
 
     switch (operation) {
     case 1:
-        if (current_entity > entityList->n_entities - 2) {
-            current_entity = 0;
+        if (g_current_entity > entityList->n_entities - 2) {
+            g_current_entity = 0;
         } else {
-            current_entity += 1;
+            g_current_entity += 1;
         }
         break;
     case -1:
-        if (current_entity == 0) {
-            current_entity = entityList->n_entities - 1;
+        if (g_current_entity == 0) {
+            g_current_entity = entityList->n_entities - 1;
         } else {
-            current_entity -= 1;
+            g_current_entity -= 1;
         }
         break;
     default:
@@ -277,11 +276,11 @@ void menu::menu::run() {
         }
 
         if (is_active() && !((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && GetAsyncKeyState('X') & 1) {
-            hacks::kill_current_entity(current_entity);
+            hacks::kill_current_entity(g_current_entity);
         }
 
         if (is_active() && !((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && (GetAsyncKeyState('T') & 1)) {
-            hacks::teleport_to_entity(current_entity);
+            hacks::teleport_to_entity(g_current_entity);
         }
 
         if (is_active() && ((GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 1) && GetAsyncKeyState('X') & 1) {

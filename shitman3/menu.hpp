@@ -51,7 +51,9 @@ class menu
 public:
     static menu* instance();
     static void shutdown();
-    static bool is_initialized();
+
+    static inline uintptr_t module_base_addr() { return module_base_addr_; }
+    static inline bool is_initialized() { return instance_ != nullptr; }
 
     menu() = delete;
     menu(menu&) = delete;
@@ -72,11 +74,12 @@ public:
     [[nodiscard]] virtual bool is_active() const;
     [[nodiscard]] virtual bool toggle() const;
 
-    virtual void render(LPDIRECT3DDEVICE9 d3dDevice) const;
+    virtual void render(LPDIRECT3DDEVICE9 device_ptr) const;
     virtual void run();
 
 private:
     static menu*              instance_;
+    static uintptr_t          module_base_addr_;
     mutable std::atomic<bool> maximized_;
     position                  position_;
     resolution                resolution_;

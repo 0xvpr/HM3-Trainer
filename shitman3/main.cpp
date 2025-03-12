@@ -3,7 +3,7 @@
  * Created:             December 24th, 2021
  * 
  * Updated by:          VPR
- * Updated:             January 15th, 2025
+ * Updated:             March 12th, 2025
  *
  * Description:         Hitman: Blood Money cheats.
 **/
@@ -17,15 +17,13 @@
 
 
 
-// primitive global variables
-uintptr_t g_module_base_addr = 0;
-
 // global pointers
 static d3d9::endscene_t original_endscene = nullptr;
 
 // render device data and vtable
 void* d3d9_device[119] = { 0 };
 uint8_t original_endscene_bytes[7] = { 0 };
+
 
 
 HRESULT APIENTRY endscene_hook(LPDIRECT3DDEVICE9 device_ptr) {
@@ -36,8 +34,6 @@ HRESULT APIENTRY endscene_hook(LPDIRECT3DDEVICE9 device_ptr) {
 }
 
 DWORD WINAPI main_thread(LPVOID lpReserved) {
-    g_module_base_addr = reinterpret_cast<uintptr_t>(GetModuleHandle(nullptr));
-    
     if ( d3d9::get_device(d3d9_device, sizeof(d3d9_device)) ) {
         memcpy( original_endscene_bytes,
                 d3d9_device[d3d9::render_function_index],
@@ -50,7 +46,7 @@ DWORD WINAPI main_thread(LPVOID lpReserved) {
     }
 
     auto& menu = *menu::menu::instance();
-    menu.run();
+    menu.run(); // main loop
     menu::menu::shutdown();
 
     memory::patch( d3d9_device[d3d9::render_function_index], original_endscene_bytes, sizeof(original_endscene_bytes) );

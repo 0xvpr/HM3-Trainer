@@ -100,7 +100,7 @@ void hacks::toggle_no_recoil(bool bEnabled) {
     auto recoil_addr = reinterpret_cast<void *>(menu::menu::module_base_addr() + offsets::recoil);
 
     if (bEnabled) {
-        memory::detour(recoil_addr, assembly::no_recoil, sizeof(patches::recoil_original));
+        memory::detour<sizeof patches::recoil_original>(recoil_addr, assembly::no_recoil);
     } else {
         memory::patch(recoil_addr, patches::recoil_original); 
     }
@@ -112,8 +112,8 @@ void hacks::toggle_flash(bool bEnabled) {
     auto mul_addr   = reinterpret_cast<void *>(menu::menu::module_base_addr() + offsets::mul);
 
     if (bEnabled) {
-        memory::detour(speed_addr, assembly::speed, sizeof(patches::speed_original));
-        memory::detour(mul_addr, assembly::mul, sizeof(patches::mul_original));
+        memory::detour<sizeof patches::speed_original>(speed_addr, assembly::speed);
+        memory::detour<sizeof patches::mul_original>(mul_addr, assembly::mul);
     } else {
         memory::patch(speed_addr, patches::speed_original); 
         memory::patch(mul_addr, patches::mul_original); 

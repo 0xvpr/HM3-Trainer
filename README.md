@@ -1,9 +1,7 @@
 <h1 align="center">Hitman Blood Money Trainer</h1>
 <p align="center">
   <img src="https://img.shields.io/badge/Windows--x86-supported-44CC11"/>
-  <a href="https://mit-license.org/"/>
-    <img src="https://img.shields.io/badge/License-MIT-44CC11"/>
-  </a>
+  <a href="https://mit-license.org/"><img src="https://img.shields.io/badge/License-MIT-44CC11"/></a>
   <img src="https://img.shields.io/github/actions/workflow/status/0xvpr/hm3-trainer/docker_build.yml?label=Build"/>
 </p>
 <br>

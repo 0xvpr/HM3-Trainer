@@ -8,6 +8,29 @@
 
 namespace memory {
 
+namespace instructions {
+    constexpr std::uint8_t nop = 0x90;
+    constexpr std::uint8_t rel_jmp = 0xE9;
+} // namespace constants
+
+namespace constants {
+    constexpr std::uint32_t rel_jmp_offset = 5;
+} // namespace constants
+
+namespace assembly {
+    struct [[nodiscard, gnu::packed]] detour_block {
+        std::uint8_t rel_jmp:8;
+        std::int32_t relative_addr:32;
+    };
+
+    template <std::size_t size>
+    struct [[nodiscard, gnu::packed]] tramp_block {
+        std::uint8_t data[size];
+        std::uint8_t rel_jmp:8;
+        std::int32_t relative_addr:32;
+    };
+} // namespace assembly
+
 /**
  * Finds the Dynamic Memory Access address of an embedded process.
  *
@@ -16,9 +39,8 @@ namespace memory {
  *
  * @return: addr
 **/
-template <typename T, typename array_t, size_t size> [[nodiscard]]
+template <typename T, typename array_t, size_t size> [[nodiscard, gnu::always_inline]]
 T find_dynamic_address(uintptr_t ptr, const std::array<array_t, size>& offsets) {
-
     auto addr = ptr;
 
     for (const auto offset : offsets) {
@@ -36,24 +58,25 @@ T find_dynamic_address(uintptr_t ptr, const std::array<array_t, size>& offsets) 
 /**
  * Byte replacement from source to destination.
  *
- * @param:  char* destination
- * @param:  T* source
- * @param:  size_t size
+ * @template(s): typename T, size_t size
+ * @param:       char* dst
+ * @param:       const std::array<T, size>& instructions
  *
  * @return: void
 **/
-template <typename T, std::size_t size>
-bool patch(void* dst, const std::array<T, size>& src) {
+template <typename T, std::size_t size> [[gnu::always_inline]]
+bool patch(void* dst, const std::array<T, size>& instructions)
+{
     DWORD oldprotect;
 
     VirtualProtect(dst, size, PAGE_EXECUTE_WRITECOPY, &oldprotect);
-    memcpy(dst, src.data(), size); 
+    memcpy(dst, instructions.data(), size); 
     VirtualProtect(dst, size, oldprotect, &oldprotect);
 
     unsigned char* destination = (unsigned char *)dst;
-    unsigned char* source = (unsigned char *)src.data();
-    for (size_t i = 0; i < size; i++, destination++, source++) {
-        if (*destination != *source ) {
+    unsigned char* source = (unsigned char *)instructions.data();
+    for (size_t i = 0; i < size; ++i) {
+        if (destination[i] != source[i]) {
             return false;
         }
     }
@@ -62,67 +85,62 @@ bool patch(void* dst, const std::array<T, size>& src) {
 }
 
 /**
- * Byte replacement from source to destination.
+ * Hooks into a function and detours the target function to another function.
  *
- * @param:  char* destination
- * @param:  T* source
- * @param:  size_t size
+ * @template: size_t  size
+ * @param:    void*   target_fptr
+ * @param:    void*   new_fptr
  *
- * @return: void
+ * @return:   bool    success
 **/
-template <typename T>
-bool patch(void* dst, T* src, size_t size) {
-    DWORD oldprotect;
+template <std::size_t size> [[gnu::always_inline]]
+inline bool detour( auto&& target_fptr,
+             auto&& new_fptr ) requires(size >= constants::rel_jmp_offset)
+{
+    DWORD old_protect = 0;
+    VirtualProtect(target_fptr, size, PAGE_EXECUTE_READWRITE, &old_protect);
 
-    VirtualProtect(dst, size, PAGE_EXECUTE_WRITECOPY, &oldprotect);
-    memcpy(dst, src, size); 
-    VirtualProtect(dst, size, oldprotect, &oldprotect);
+    memset(target_fptr, instructions::nop, size);
 
-    unsigned char* destination = (unsigned char *)dst;
-    unsigned char* source = (unsigned char *)src;
-    for (size_t i = 0; i < size; i++, destination++, source++) {
-        if (*destination != *source ) {
-            return false;
-        }
-    }
+    std::int32_t relative_addr = ((std::int32_t)new_fptr - (std::int32_t)target_fptr) - constants::rel_jmp_offset;
+    auto* asm_block = reinterpret_cast<assembly::detour_block *>(+target_fptr);
+    asm_block->rel_jmp       = instructions::rel_jmp;
+    asm_block->relative_addr = relative_addr;
+
+    VirtualProtect(target_fptr, size, old_protect, &old_protect);
 
     return true;
 }
-
-
-/**
- * Hooks into a function and detours the target function to another function.
- *
- * @param:  void* targetFunc
- * @param:  void* myFunc
- * @param:  size_t size
- *
- * @return: bool
-**/
-bool detour(void* targetFunc, void* myFunc, size_t size);
-
-/**
- * Hooks into a function and detours the target function to another function.
- *
- * @param:  void* targetFunc
- * @param:  void(* myFuncPtr)(void)
- * @param:  size_t size
- *
- * @return: bool
-**/
-bool detour(void* targetFunc, void (* myFuncPtr)(void), size_t size);
 
 /**
  * Hooks into a function and detours the target function to another function, then jumps back.
  *
- * @param:  char* src
- * @param:  char* dst
- * @param:  size_t size
+ * @template: size_t  size
+ * @param:    char*   target_fptr
+ * @param:    char*   tramp_fptr
  *
- * @return: char*
+ * @return:   char*   original_address
 **/
-[[nodiscard]]
-char* trampoline_hook(char* targetFunc, char* myFunc, size_t size);
+template <std::size_t size> [[nodiscard, gnu::always_inline]]
+std::uint8_t* trampoline_hook(char* target_fptr, char* tramp_fptr) requires( size >= constants::rel_jmp_offset) {
+    std::uint8_t* gateway = (std::uint8_t *)VirtualAlloc(nullptr, size + memory::constants::rel_jmp_offset, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+    memcpy(gateway, target_fptr, size);
+
+    std::int32_t gate_jmp_addr = (std::int32_t)((uintptr_t)(target_fptr - (uintptr_t)gateway) - memory::constants::rel_jmp_offset);
+    auto* asm_block = reinterpret_cast<assembly::tramp_block<size> *>(+gateway);
+    asm_block->rel_jmp = instructions::rel_jmp;
+    asm_block->relative_addr = gate_jmp_addr;
+
+    DWORD old_protect = 0;
+    VirtualProtect((LPVOID)asm_block->relative_addr, size, PAGE_EXECUTE_READ, &old_protect);
+
+    if (detour<size>(target_fptr, tramp_fptr)) {
+        return gateway;
+    } else {
+        return nullptr;
+    }
+}
+
 
 /**
  * Scans a given chunk of data for the given pattern and mask.

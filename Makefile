@@ -3,7 +3,7 @@ PROJECT         = shitman3
 CC              = i686-w64-mingw32-g++
 CFLAGS          = -std=c++2a -Wall -Wextra -Werror -Wshadow -Wpedantic -Wconversion\
                   -Wno-missing-field-initializers -Wno-attributes -Wno-cast-function-type -Wno-unused-but-set-parameter\
-                  -fno-rtti -fno-exceptions
+                  -fno-rtti -fno-exceptions -fno-asynchronous-unwind-tables
 
 LD              = i686-w64-mingw32-g++
 LDFLAGS         = -static -shared -ld3d9 -ld3dx9

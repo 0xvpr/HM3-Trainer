@@ -59,7 +59,7 @@ extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpRes
     switch (dwReason) {
         case DLL_PROCESS_ATTACH: {
             DisableThreadLibraryCalls(hInstance);
-            CreateThread(0, 0, (LPTHREAD_START_ROUTINE)main_thread, hInstance, 0, 0);
+            CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)main_thread, hInstance, 0, nullptr);
             break;
         }
         case DLL_PROCESS_DETACH: { break; }

@@ -23,4 +23,4 @@ extra-clean:
 	rm -fr ./build
 
 package:
-	zip shitman.zip bin/loader.exe lib/shitman3.dll lib/binkw32_patch.dll
+	zip -jrD shitman.zip bin/loader.exe lib/shitman3.dll lib/binkw32_patch.dll

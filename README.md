@@ -1,4 +1,4 @@
-<h1 align="center">Hitman Blood Money Trainer</h1>
+<h1 align="center">Hitman Blood Money Trainer (STEAM VERSION ONLY)</h1>
 <p align="center">
   <img src="https://img.shields.io/badge/Windows--x86-supported-44CC11"/>
   <a href="https://mit-license.org/"><img src="https://img.shields.io/badge/License-MIT-44CC11"/></a>
@@ -19,16 +19,25 @@ of God Mode and Teleport hacks.
 ## Table of Contents
 - [What I Learned](#what-i-learned)
 - [How it Works](#how-it-works)
+- [EZ Install instructions](#ez-install-instructions)
 - [Build Instructions](#build-instructions)
 - [Known Issues](#known-issues)
 - [Goals](#Goals)
   
 ### What I Learned
-[ What the fuck did I actually learn ]
+```bash
+mf nothing
+```
 
 ### How it works
+There is an [ez install option](#ez-install-instructions) using the shitman3.zip.
+
 The DLL must be injected WHILE the game is running in the foreground.  
-It is very finicky and will crash/hang otherwise.
+It is very finicky and will crash/hang otherwise.  
+  
+Just use your favorite payload injector and throw that bitch in there.  
+It works better when the game is windowed.
+
 
 The hacks written are:
 - Press <code>Numpad 1</code> to toggle Infinite Ammo.
@@ -45,20 +54,24 @@ The hacks written are:
 - Press <code>]</code> next entity.
 - Press <code>END</code> to eject.
 
-### Known issues
-One shot kill currently prevents "Accidental deaths" from counting as killed targets.  
-The player has to manually kill them in order for their death to register. This may be  
-solvable by changing the one shot op code from <code>mov</code> to <code>xor</code>
+### EZ Install Instructions
+This is idiot proof. (I PRAY)
 
-There are currently game states that may trigger a crash if cheats are enabled.
+1. Download the latest zip file from the [releases](https://github.com/0xvpr/HM3-Trainer/releases).
+2. Drop the zip in your main Hitman Bloodmoney folder.
+<img src="./resources/step2.png" alt="step2"/>
+3. Unzip the zip files into the same directory.
+<img src="./resources/step3.png" alt="step3"/>
+4. Run the loader via cmd.exe or double click it.
+<img src="./resources/step4.png" alt="step4"/>
+5. Run the game normally through steam.
+<img src="./resources/step5.png" alt="step5"/>
+6. Alt + Tab once the game starts and click OK on the message box pop-up.
+<img src="./resources/step6.png" alt="step6"/>
+7. Alt + Tab back in.
 
-These game states include:
-- Restarting a mission with cheats enabled (sometimes)
-
-### Usage
-Just use your favorite payload injector and throw that bitch in there.  
-It works better when the game is windowed.
-### Build with Docker + WSL2 (Recommended)
+### Build Instructions
+[ with Docker + WSL2 (Recommended) ] 
 ```
 git clone https://github.com/0xvpr/HM3-Trainer.git hm3-trainer && cd hm3-trainer
 make docker-container
@@ -68,6 +81,18 @@ make docker-build
 ```powershell
 # Go fuck yourself
 ```
+
+### Known issues
+DOES NOT WORK WITH ANY NON-STEAM VERSION OF THE GAME.  
+  
+One shot kill currently prevents "Accidental deaths" from counting as killed targets.  
+The player has to manually kill them in order for their death to register. This may be  
+solvable by changing the one shot op code from <code>mov</code> to <code>xor</code>
+
+There are currently game states that may trigger a crash if cheats are enabled.
+
+These game states include:
+- Restarting a mission with cheats enabled (sometimes)
 
 ### Goals
  - [x] Find reliable weapon pointer.
